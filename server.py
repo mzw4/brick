@@ -4,21 +4,43 @@ from pymongo import MongoClient
 app = Flask(__name__)
 
 ###############################################################################
+################################     Constants      ###########################
+###############################################################################
+
+MAX_QUERY_LENGTH = 100
+
+###############################################################################
 ################################     URLS      ################################
 ###############################################################################
 
 @app.route("/")
 def main():
-    return render_template('main.html')
+  return render_template('main.html')
 
 # dishes and corresponding restaurants
 @app.route("/ajax_get_dish_data", methods=['GET'])
 def get_dish_data():
-    dishes = get_db_collection('dishes')
+  dish = request.args.get('dish', '')
+  sort_by = request.args.get('sort_by', '')
+  sort_dir = request.args.get('sort_dir', '')
 
-    return []
+  dishes = get_db_collection('dishes')
+  dishes_list = []
+  if sort_by == 'rating':
+    dishes_list = dishes.find({ name: dish }).sort({ rating: -1 if sort_dir == 'desc' else 1 }).limit(MAX_QUERY_LENGTH)
+  elif sort_by == 'price':
+    dishes_list = dishes.find({ name: dish }).sort({ price: -1 if sort_dir == 'desc' else 1 }).limit(MAX_QUERY_LENGTH)
+  elif sort_by == 'distance':
+    # do later
+    pass
 
-@app.route("/ajax_submit_review", methods=['POST']))
+  # for associated restaurant data
+  restaurant_list = []
+
+
+  return jsonify(dishes_list)
+
+@app.route("/ajax_submit_review", methods=['POST'])
 def submit_review():
   if request.method == 'POST':
     user_phone = request.form['phone']
@@ -42,22 +64,26 @@ def get_db_connection(db):
     return client[db]
 
 def get_db_collection(collection):
-    return get_db_connection('dishout')[collection]
+    return get_db_connection('brick')[collection]
 
 def populate_mock_db():
-  # dishes = get_db_collection('dishes')
-  # for i in range(10):
-  #   dish = {
-  #     name: str(i) + '-dish',
-  #     price: 1,
-  #     rating: 4.5,
-      
-  #   }
-  #   dishes.insert
+  dishes = get_db_collection('dishes')
+  for i in range(10):
+    dish = {
+      'name': str(i) + '-dish',
+      'price': 1,
+      'rating': 4.5,
+      'num_ratings': 100,
+      'restaurant_id': 123,
+    }
+    dishes.insert_one(dish)
+  # for dish in dishes.find():
+  #   print dish
 
 ###############################################################################
 ###############################     Main      ################################
 ###############################################################################
 
 if __name__ == "__main__":
+    populate_mock_db()
     app.run()
