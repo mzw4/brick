@@ -1,8 +1,30 @@
 <html>
-<head>
-  <title>DishOut</title>
-</head>
-<body>
-  Search for dishes yay!
-</body>
+	<head>
+	  <title>DishOut</title>
+	  <script src="../static/lib/jquery.min.js"></script>
+	  <link rel="stylesheet" href="../static/lib/bootstrap.min.css" />
+	  <link rel="stylesheet" href="../static/lib/font-awesome.min.css" />
+	  <script src="../static/lib/bootstrap.min.js"></script>
+	  <script src="../static/lib/angular.min.js"></script>
+	  <script src="../static/lib/angular-animate.min.js"></script>
+	  <script src="../static/lib/angular-route.min.js"></script>
+	  <link rel="stylesheet" href="../static/css/style.css" />
+	  <link rel="stylesheet" href="../static/fonts/FabFelt/stylesheet.css" />
+	  <link rel="stylesheet" href="../static/fonts/HankenBook/stylesheet.css" />
+	</head>
+	<body ng-app="dishout">
+		<div class="wrapper continer-fluid" ng-controller="mainCtrl">
+			<div class="row navbar">
+				<div class="col-xs-12 title">DishOut</div>
+			</div>
+			<div class="main">
+				<ng-view></ng-view>
+			</div>
+		</div>
+	  
+	  <script src="../static/app.js"></script>
+	  <script src="../static/js/main.js"></script>
+	  <script src="../static/js/home.js"></script>
+
+	</body>
 </html>
