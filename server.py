@@ -123,6 +123,19 @@ def submit_review():
   print dishes.find_one({ 'name': dish })
   return 'success'
 
+@app.route("/ajax_upvote_review", methods=['POST'])
+def upvote_review(review_id):
+	reviews = get_db_collection('reviews')
+	reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1}})
+	return 'success'
+
+@app.route("/ajax_downvote_review", methods=['POST'])
+def downvote_review(review_id):
+	reviews = get_db_collection('reviews')
+	reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1}})
+	return 'success'
+
+
 ###############################################################################
 ################################     DB      ##################################
 ###############################################################################

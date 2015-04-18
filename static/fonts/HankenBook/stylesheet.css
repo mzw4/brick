@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'hankenbook';
+    src: url('Hanken-Book-webfont.eot');
+    src: url('Hanken-Book-webfont.eot?#iefix') format('embedded-opentype'),
+         url('Hanken-Book-webfont.woff2') format('woff2'),
+         url('Hanken-Book-webfont.woff') format('woff'),
+         url('Hanken-Book-webfont.ttf') format('truetype'),
+         url('Hanken-Book-webfont.svg#hankenbook') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
