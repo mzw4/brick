@@ -6,7 +6,10 @@ angular.module('dishout')
                 result = data;
             },
             getResult:function () {
-				return $http.get('/ajax_get_dish_data?dish=1-dish');
+                var params = result['selection'] + '=' + result['params']
+                if (result['selection'] === 'location' || result['selection'] === 'dish')
+                    params += '&search_type=' + result['selection']
+				return $http.get('/ajax_get_dish_data?' + params);
             }
         };
     });
