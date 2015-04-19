@@ -129,6 +129,7 @@ if __name__ == "__main__":
 				'dishes': [],
 				'type': categories,
 				'rating': entry['rating'],
-				'lat_long': (latitude, longitude)
+				'lat_long': (latitude, longitude),
+				'photo': entry['image_url']
 			}
 		)
