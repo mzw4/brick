@@ -1,3 +1,6 @@
+import math
+from pymongo import MongoClient
+
 def to_url_param(param):
 	'''
 		Takes string and converts into appropriate URL parameter by replacing whitespace with +'s
