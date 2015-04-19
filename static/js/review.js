@@ -16,8 +16,6 @@ $(function () {
   $submit_button = $('#submit_button');
   $upload_help_text = $('#upload_help_text');
 
-  // $restaurant_field.val('The Cobra Club');
-
   // initialize star rating input
   $rating_field.barrating({
     'initialRating': null,

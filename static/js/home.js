@@ -1,7 +1,7 @@
 var homeCtrl = function($scope, $rootScope, $animate, $timeout, Search) {
 	
-	$scope.submitSearch = function(selection, params) {
-		Search.saveResult({'selection': selection, 'params': params});
+	$scope.submitSearch = function(selection, query, location) {
+		Search.saveResult({'selection': selection, 'params': query, 'location': location });
 	}
 
 	$scope.options = {
@@ -15,6 +15,9 @@ var homeCtrl = function($scope, $rootScope, $animate, $timeout, Search) {
     "AK" : "Alaska",
     "AS" : "American Samoa"
   };
+
+  $('.dish-search').val('sushi');
+  $('.location-search').val('354 Clement St San Francisco, CA 94118');
 }
 
 angular

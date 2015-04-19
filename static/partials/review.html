@@ -1,25 +1,12 @@
 
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}" />
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/review.css') }}" />
+<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="static/css/style.css" />
+<link rel="stylesheet" type="text/css" href="static/css/review.css" />
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-<script src="{{ url_for('static', filename='js/lib_cool/typeahead.bundle.js') }}"></script>
-<script src="{{ url_for('static', filename='js/lib_cool/jquery.barrating.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/lib_cool/dropzone.js') }}"></script>
-<script src="{{ url_for('static', filename='js/review.js') }}"></script>
-
-<div class="wrapper continer-fluid" ng-controller="mainCtrl">
-  <div class="row navbar">
-    <div class="nav_buttons col-xs-6">
-      <ul class="nav navbar-nav">
-        <li><a href="/#/"><div class="vertical_center">Search</div></a></li>
-        <li><a href="/review"><div class="vertical_center">Review a dish</div></a></li>
-      </ul>
-    </div>
-    <div class="col-xs-6 title">DishOut</div>
-  </div>
-</div>
+<script src="static/js/lib_cool/typeahead.bundle.js"></script>
+<script src="static/js/lib_cool/jquery.barrating.min.js"></script>
+<script src="static/js/lib_cool/dropzone.js"></script>
+<script src="static/js/review.js"></script>
 
 <div id="content_panel">
   <div id="input_panel" class="text_center row">
@@ -85,7 +72,7 @@
       <div id="image_wrapper">
         <img id="img_display" src=""/>
         <div id="upload_help_text" class="vertical_center">Drag and drop a photo to upload it.</div>
-        <form action="/#" class="dropzone" id="image_upload_form">
+        <form action="#" class="dropzone" id="image_upload_form">
         </form>
       </div>
       <div id="hide"></div>

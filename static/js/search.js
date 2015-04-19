@@ -1,7 +1,15 @@
 var searchCtrl = function($scope, $rootScope, Search, $http) {
 	var result = Search.getResult().then(function(data) {
 		$scope.results = data.data.dishes;
-		console.log(data.data.dishes)
+		$scope.photos = data.data.photos;
+		$scope.restaurants = data.data.restaurants;
+		$scope.reviews = data.data.reviews;
+
+		console.log($scope.results);
+		console.log($scope.photos[$scope.reviews[$scope.results[1].reviews[0]].photo].image_data);
+		
+		$('#search_term').html(data.data.original_query_dish);
+		$('#search_type').html(data.data.search_type);
 	})
 	$scope.dish = {
 		_id: result['_id'],

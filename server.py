@@ -56,12 +56,14 @@ def get_dish_data():
     dishes = get_db_collection('dishes')
     restaurants = get_db_collection('restaurants')
     reviews = get_db_collection('reviews')
+    images = get_db_collection('images')
 
     # filter restaurants by distance to specified location
     all_restaurants = restaurants.find()
     filtered_restaurants = filter_by_distance(all_restaurants, location, float(distance))
     filtered_restaurants_ids = map(lambda r: r['_id'], filtered_restaurants)
 
+    dishes_list = []
     if search_type == 'dish':
       # query for dishes matching the specified name or tags and within the specified distance
       dishes_list = list(dishes.find({ 'name': dish, 'restaurant_id': { '$in': filtered_restaurants_ids } })\
@@ -77,6 +79,9 @@ def get_dish_data():
       dishes_list = list(dishes.find({ 'restaurant_id': restaurant_id })\
         .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
         .limit(MAX_QUERY_LENGTH))
+      formatted_search_type = 'Restaurants'
+    else:
+      print 'INVALID SEARCH TYPE'
 
     # get associated restaurant data
     restaurant_ids = set(map(lambda dish: dish['restaurant_id'], dishes_list))
@@ -88,6 +93,12 @@ def get_dish_data():
       review_ids += dish['reviews']
     reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
 
+    photo_ids = []
+    for r in reviews_list:
+      photo_ids += [r['photo']]
+    print photo_ids
+    photos_list = list(images.find({ '_id': { '$in': photo_ids } }))
+
     # print dishes_list
     # print restaurant_list
     # print reviews_list
@@ -97,7 +108,9 @@ def get_dish_data():
       'dishes': format_data_response(dishes_list),
       'restaurants': format_data_response(restaurant_list),
       'reviews': format_data_response(reviews_list),
+      'photos': format_data_response(photos_list)
     }
+    print photos_list
     return jsonify(result)
 
   else:
@@ -177,6 +190,12 @@ def submit_review():
         reviewed_dish_id = dishes.insert(new_dish)
         print 'added new dish ' + str(reviewed_dish_id)
 
+      # if there is a photo, upload it to the photo collection
+      image_id = None
+      if photo:
+        images = get_db_collection('images')
+        image_id = images.insert({ '_id': next_id('images'), 'image_data': photo })
+        
       # construct review and insert it
       new_review = {
         '_id': new_review_id,
@@ -309,11 +328,33 @@ def populate_mock_db():
   #   }
   #   restaurants.insert_one(r)
 
+  dish = {
+    '_id': next_id('dishes'),
+    'name': 'sushi',
+    'price': 15.99,
+    'rating': 4.5,
+    'num_ratings': 10,
+    'restaurant_id': 'the-cobra-club-bushwick',
+    'reviews': [],
+    'tags': [],
+  }
+  dishes.insert_one(dish)
+  dish = {
+    '_id': next_id('dishes'),
+    'name': 'sushi',
+    'price': 15.99,
+    'rating': 4.5,
+    'num_ratings': 10,
+    'restaurant_id': 'shabu-house-san-francisco-3',
+    'reviews': [],
+    'tags': [],
+  }
+  dishes.insert_one(dish)
 
 ###############################################################################
 ###############################     Main      ################################
 ###############################################################################
-# populate_mock_db()
+populate_mock_db()
 # submit_review()
 # get_dish_data()
 # get_name_data()

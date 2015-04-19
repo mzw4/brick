@@ -10,4 +10,8 @@ angular
 			   templateUrl: 'static/partials/search.html', 
 			   controller: searchCtrl
 			})
+			.when('/review', {
+			   templateUrl: 'static/partials/review.html', 
+			   controller: homeCtrl
+			})
 	});

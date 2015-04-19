@@ -9,6 +9,7 @@
 	  <script src="static/lib_cool/angular-route.min.js"></script>
 	  <link rel="stylesheet" href="static/lib_cool/animate.css" />
 	  <link rel="stylesheet" href="static/css/style.css" />
+	  <link rel="stylesheet" href="static/css/home.css" />
 	  <link rel="stylesheet" href="static/fonts/FabFelt/stylesheet.css" />
 	  <link rel="stylesheet" href="static/fonts/HankenBook/stylesheet.css" />
 	  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -16,8 +17,12 @@
 	<body ng-app="dishout">
 		<div class="wrapper continer-fluid" ng-controller="mainCtrl">
 			<div class="row navbar">
-				<div class="col-xs-12 title">DishOut</div>
+		        <div class="col-xs-2 item"><a href="/#/">Search</a></div>
+		        <div class="col-xs-2 item"><a href="#review">Review A Dish</a></div>
+				<div class="col-xs-2"></div>
+				<div class="col-xs-6 title">DishOut</div>
 			</div>
+
 			<div class="main">
 				<div id="load" ng-show="$root.loading">
 					<img src="static/img/loader.gif" />
@@ -25,7 +30,7 @@
 				<div ng-view class="page"></div>
 			</div>
 		</div>
-	  
+
 	  <script src="static/app.js"></script>
 	  <script src="static/js/directives/event-prop.js"></script>
 	  <script src="static/js/services/search.js"></script>

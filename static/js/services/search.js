@@ -6,9 +6,10 @@ angular.module('dishout')
                 result = data;
             },
             getResult:function () {
-                var params = result['selection'] + '=' + result['params']
-                if (result['selection'] === 'location' || result['selection'] === 'dish')
-                    params += '&search_type=' + result['selection']
+                var params = result['selection'] + '=' + result['params'];
+                params += '&search_type=' + result['selection'];
+                params += '&location=' + result['location'];
+
 				return $http.get('/ajax_get_dish_data?' + params);
             }
         };
