@@ -313,11 +313,7 @@ def populate_mock_db():
 # get_dish_data()
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     populate_mock_db()
     app.run(
 	host="0.0.0.0",
 	port=9000)
-=======
-    app.run(port=5000)
->>>>>>> a44d6cb4d9eb64ab3b7605945419aa6f4e61b200
