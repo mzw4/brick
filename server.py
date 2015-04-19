@@ -190,6 +190,12 @@ def submit_review():
         reviewed_dish_id = dishes.insert(new_dish)
         print 'added new dish ' + str(reviewed_dish_id)
 
+      # if there is a photo, upload it to the photo collection
+      image_id = None
+      if photo:
+        images = get_db_collection('images')
+        image_id = images.insert({ '_id': next_id('images'), 'image_data': photo })
+        
       # construct review and insert it
       new_review = {
         '_id': new_review_id,
