@@ -1,8 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient
 
-app = Flask(__name__)
-
+app = Flask(__name__, static_folder='/home/pango/projects/dishout/static')
 ###############################################################################
 ################################     Constants      ###########################
 ###############################################################################
@@ -16,6 +15,11 @@ MAX_QUERY_LENGTH = 100
 @app.route("/")
 def main():
   return render_template('main.html')
+
+@app.route('/<path:path>')
+def static_proxy(path):
+  # send_static_file will guess the correct MIME type
+  return app.send_static_file(path)
 
 # dishes and corresponding restaurants
 @app.route("/ajax_get_dish_data", methods=['GET'])
@@ -86,4 +90,6 @@ def populate_mock_db():
 
 if __name__ == "__main__":
     populate_mock_db()
-    app.run()
+    app.run(
+	host="0.0.0.0",
+	port=9000)
