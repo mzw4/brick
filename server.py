@@ -94,9 +94,12 @@ def get_dish_data():
 
     # form response
     result = {
-      'dishes': format_data_response(dishes_list),
-      'restaurants': format_data_response(restaurant_list),
-      'reviews': format_data_response(reviews_list),
+    	'dishes': format_dish_response(dishes_list),
+    	'restaurants': format_restaurant_response(restaurant_list),
+    	'reviews': format_review_response(reviews_list)
+      #'dishes': format_data_response(dishes_list),
+      #'restaurants': format_data_response(restaurant_list),
+      #'reviews': format_data_response(reviews_list),
     }
     return jsonify(result)
 
@@ -276,6 +279,59 @@ def format_data_response(data):
 	for d in data:
 		formatted_data[d['_id']] = d
 	return jsonify(formatted_data)
+
+def format_restaurant_response(restaurant):
+	formatted_data = {}
+	for d in data:
+		new_restaurant = {
+			'_id': d['id'],
+			'name': d['name'],
+			'address': d['address'],
+			'phone': d['phone'],
+			'dishes': d['dishes'],
+			'type': d['type'],
+			'rating': d['rating'],
+			'latitude': d['lat_long'][0],
+			'longitude': d['lat_long'][1]
+		}
+		formatted_data[d['_id']] = new_restaurant
+	return jsonify(formatted_data)
+
+def format_dish_response(dish):
+	formatted_data = {}
+	for d in data:
+		new_dish = {
+          '_id': d['_id'],
+          'name': d['name'],
+          'restaurant_id': d['restaurant_id'],
+          'price': d['price'],
+          'reviews': d['reviews'],
+          'rating': d['rating'],
+          'num_ratings': d['num_ratings'],
+          'tags': d['tags']
+        }
+       	formatted_data[d['_id']] = new_dish
+	return jsonify(formatted_data)
+
+def format_review_response(review):
+	formatted_data = {}
+	for d in data:
+		new_review = {
+	        '_id': d['_id'],
+	        'user_id': d['user_id'],
+	        'dish_id': d['dish_id'],
+	        'restaurant_id': d['restaurant_id'],
+	        'rating': d['rating'],
+	        'text': d['text'],
+	        'date': d['date'],
+	        'photo': d['photo'],
+	        'votes': d['votes'],
+      	}
+		formatted_data[d['_id']] = new_review
+	return jsonify(formatted_data)
+
+
+        
 
 def populate_mock_db():
   get_db_collection('dishes').remove({})
