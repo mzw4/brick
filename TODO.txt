@@ -1,8 +1,14 @@
 TODO:
 
-other search terms
-  restaurant
+backend:
+  user select price
+  make price and description optional
 
-figure out photos
+  search by tags
+  get more restaurants in db
 
-search by tags
+frontend:
+  integrate review form with rest of site
+  
+  restaurant description modal
+  view for seeing all reviews for a dish
