@@ -33,73 +33,72 @@ def review():
 # dishes and corresponding restaurants
 @app.route("/ajax_get_dish_data", methods=['GET'])
 def get_dish_data():
-  # if request.method == 'GET':
+  if request.method == 'GET':
 
-    # dish = request.args.get('dish', '')
-    # sort_by = request.args.get('sort_by', '')
-    # sort_dir = request.args.get('sort_dir', '')
-    # location = request.args.get('location', '')
-    # distance = request.args.get('distance', '')
-    # search_type = request.args.get('search_type', '')
+    dish = request.args.get('dish', '')
+    sort_by = request.args.get('sort_by', '')
+    sort_dir = request.args.get('sort_dir', '')
+    location = request.args.get('location', '')
+    distance = request.args.get('distance', '')
+    search_type = request.args.get('search_type', '')
+  # if True:
+  #   dish = '5-dish'
+  #   sort_by = 'rating'  # price, distance
+  #   sort_dir = 'desc'
+  #   location = '775 New York, Brooklyn, New York 11203'
+  #   distance = 5
+  #   search_type = 'dish'
 
-  dish = '5-dish'
-  sort_by = 'rating'  # price, distance
-  sort_dir = 'desc'
-  location = '775 New York, Brooklyn, New York 11203'
-  distance = 5
-  search_type = 'dish'
+    # get collections
+    dishes = get_db_collection('dishes')
+    restaurants = get_db_collection('restaurants')
+    reviews = get_db_collection('reviews')
 
-  # get collections
-  dishes = get_db_collection('dishes')
-  restaurants = get_db_collection('restaurants')
-  reviews = get_db_collection('reviews')
+    # filter restaurants by distance to specified location
+    all_restaurants = restaurants.find()
+    filtered_restaurants = filter_by_distance(all_restaurants, location, float(distance))
+    filtered_restaurants_ids = map(lambda r: r['_id'], filtered_restaurants)
 
+    if search_type == 'dish':
+      # query for dishes matching the specified name or tags and within the specified distance
+      dishes_list = list(dishes.find({ 'name': dish, 'restaurant_id': { '$in': filtered_restaurants_ids } })\
+        .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
+        .limit(MAX_QUERY_LENGTH))
+    elif search_type == 'location':
+      # query for dishes within the specified distance
+      dishes_list = list(dishes.find({ 'restaurant_id': { '$in': filtered_restaurants_ids } })\
+        .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
+        .limit(MAX_QUERY_LENGTH))
+    elif search_type == 'restaurant':
+      # query for dishes at this restaurant
+      # TODO
+      # get restaurant id
+      pass
 
-  # filter restaurants by distance to specified location
-  all_restaurants = restaurants.find()
-  filtered_restaurants = filter_by_distance(all_restaurants, location, float(distance))
-  filtered_restaurants_ids = map(lambda r: r['_id'], filtered_restaurants)
+    # get associated restaurant data
+    restaurant_ids = set(map(lambda dish: dish['restaurant_id'], dishes_list))
+    restaurant_list = filter(lambda r: r if r['_id'] in restaurant_ids else None, filtered_restaurants)
 
-  if search_type == 'dish':
-    # query for dishes matching the specified name or tags and within the specified distance
-    dishes_list = list(dishes.find({ 'name': dish, 'restaurant_id': { '$in': filtered_restaurants_ids } })\
-      .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
-      .limit(MAX_QUERY_LENGTH))
-  elif search_type == 'location':
-    # query for dishes within the specified distance
-    dishes_list = list(dishes.find({ 'restaurant_id': { '$in': filtered_restaurants_ids } })\
-      .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
-      .limit(MAX_QUERY_LENGTH))
-  elif search_type == 'restaurant':
-    # query for dishes at this restaurant
-    # TODO
-    # get restaurant id
-    pass
+    # get associated review data
+    review_ids = []
+    for dish in dishes_list:
+      review_ids += dish['reviews']
+    reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
 
-  # get associated restaurant data
-  restaurant_ids = set(map(lambda dish: dish['restaurant_id'], dishes_list))
-  restaurant_list = filter(lambda r: r if r['_id'] in restaurant_ids else None, filtered_restaurants)
+    # print dishes_list
+    # print restaurant_list
+    # print reviews_list
 
-  # get associated review data
-  review_ids = []
-  for dish in dishes_list:
-    review_ids += dish['reviews']
-  reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
+    # form response
+    result = {
+      'dishes': format_data_response(dishes_list),
+      'restaurants': format_data_response(restaurant_list),
+      'reviews': format_data_response(reviews_list),
+    }
+    return result
 
-  # print dishes_list
-  # print restaurant_list
-  # print reviews_list
-
-  # form response
-  result = {
-    'dishes': format_data_response(dishes_list),
-    'restaurants': format_data_response(restaurant_list),
-    'reviews': format_data_response(reviews_list),
-  }
-  return result
-
-  # else:
-  #   return 'failed'
+  else:
+    return 'failed'
 
 @app.route("/ajax_submit_review", methods=['POST'])
 def submit_review():
@@ -113,7 +112,6 @@ def submit_review():
     tags = ast.literal_eval(request.form.get('tags', ''))
     photo = request.form.get('photo', '')
     date = request.form.get('date', '')
-
   # if True:
   #   dish = '5-disddh'
   #   restaurant = 'The Cobra Club'
@@ -209,6 +207,19 @@ def downvote_review():
   reviews = get_db_collection('reviews')
   reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1 }})
   return 'success'
+
+@app.route("/ajax_get_name_data", methods=['GET'])
+def get_name_data():
+  if request.method == 'GET':
+    dishes = get_db_collection('dishes')
+    restaurants = get_db_collection('restaurants')
+
+    pipeline = [
+      {"$group": {"_id": "$name", "count": {"$sum": 1}}},
+    ]
+    dish_names = map(lambda d: d['_id'], list(dishes.aggregate(pipeline)))
+    restaurant_names = map(lambda r: r['_id'], list(restaurants.aggregate(pipeline)))
+    return jsonify({ 'dish_names': dish_names, 'restaurant_names': restaurant_names })
 
 ###############################################################################
 ######################     Helper functions      ##############################
@@ -313,9 +324,10 @@ def populate_mock_db():
 ###############################################################################
 ###############################     Main      ################################
 ###############################################################################
-#populate_mock_db()
-#submit_review()
-#get_dish_data()
+# populate_mock_db()
+# submit_review()
+# get_dish_data()
+# get_name_data()
 
 if __name__ == "__main__":
   app.debug = True
