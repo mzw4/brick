@@ -2,6 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient, ReturnDocument
 from bson.binary import Binary
 from populate_db import to_url_param
+from datetime import datetime
 
 import pymongo
 import urllib2
@@ -40,6 +41,7 @@ def get_dish_data():
     sort_dir = request.args.get('sort_dir', '')
     location = request.args.get('location', '')
     distance = request.args.get('distance', '')
+    restaurant_id = request.args.get('restaurant_id', '')
     search_type = request.args.get('search_type', '')
   # if True:
   #   dish = '5-dish'
@@ -71,9 +73,9 @@ def get_dish_data():
         .limit(MAX_QUERY_LENGTH))
     elif search_type == 'restaurant':
       # query for dishes at this restaurant
-      # TODO
-      # get restaurant id
-      pass
+      dishes_list = list(dishes.find({ 'restaurant_id': restaurant_id })\
+        .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
+        .limit(MAX_QUERY_LENGTH))
 
     # get associated restaurant data
     restaurant_ids = set(map(lambda dish: dish['restaurant_id'], dishes_list))
@@ -100,6 +102,7 @@ def get_dish_data():
   else:
     return 'failed'
 
+
 @app.route("/ajax_submit_review", methods=['POST'])
 def submit_review():
   if request.method == 'POST':
@@ -111,7 +114,8 @@ def submit_review():
     price = request.form.get('price', '')
     tags = ast.literal_eval(request.form.get('tags', ''))
     photo = request.form.get('photo', '')
-    date = request.form.get('date', '')
+    date = datetime.now()
+
   # if True:
   #   dish = '5-disddh'
   #   restaurant = 'The Cobra Club'
