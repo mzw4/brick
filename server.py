@@ -98,7 +98,7 @@ def get_dish_data():
       'restaurants': format_data_response(restaurant_list),
       'reviews': format_data_response(reviews_list),
     }
-    return result
+    return jsonify(result)
 
   else:
     return 'failed'
