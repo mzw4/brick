@@ -15,6 +15,7 @@ API_HOST = 'api.yelp.com'
 SEARCH_PATH = '/v2/search/'
 BUSINESS_PATH = '/v2/business/'
 DEFAULT_TERM = 'food'
+GOOGLE_API_KEY = 'AIzaSyAKVuw31IAwXeb5fuz4G8-Uept41q936hg'
 
 def get_db_connection(db):
     client = MongoClient()
@@ -102,9 +103,14 @@ def query_api(term, location):
         print u'No businesses for {0} in {1} found.'.format(term, location)
         return
 
-    business_id = businesses[0]['id']
-
     return businesses
+
+def to_url_param(param):
+	'''
+		Takes string and converts into appropriate URL parameter by replacing whitespace with +'s
+	'''
+	return '+'.join(param.split(' '))
+
 
 connection = get_db_connection('brick')
 restaurants = get_db_collection('restaurants')
@@ -113,15 +119,23 @@ sf_food_response = query_api('food', 'san+francisco')
 food_responses = ny_food_response + sf_food_response
 for entry in food_responses:
 	location = entry['location']
+	address = location['address'][0] + ' ' + location['city'] + ', ' + location['state_code'] + ' ' + location['postal_code']
+	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + to_url_param(address) + '&key=' + GOOGLE_API_KEY
+	response = json.loads(urllib2.urlopen(url).read())
+	location = response['results'][0]['geometry']['location']
+	latitude = location['lat']
+	longitude = location['lng']
+
 	restaurants.insert(
 		{
 			'_id': entry['id'],
 			'name': entry['name'],
-			'address': location['address'][0] + ' ' + location['city'] + ', '
-				+ location['state_code'] + ' ' + location['postal_code'],
-			'phone': entry['phone'],
+			'address': address,
+			'phone': entry['phone'] if 'phone' in entry else '',
 			'dishes': [],
 			'type': list(itertools.chain(entry['categories'])),
-			'rating': entry['rating']
+			'rating': entry['rating'],
+			'lat_long': (latitude, longitude)
 		}
 	)
+

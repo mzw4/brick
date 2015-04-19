@@ -1,6 +1,9 @@
 from flask import Flask, render_template, jsonify, request
-import pymongo
 from pymongo import MongoClient, ReturnDocument
+from populate_db import to_url_param
+
+import urllib2
+import json
 
 app = Flask(__name__)
 
@@ -9,6 +12,7 @@ app = Flask(__name__)
 ###############################################################################
 
 MAX_QUERY_LENGTH = 100
+GOOGLE_API_KEY = 'AIzaSyAKVuw31IAwXeb5fuz4G8-Uept41q936hg'
 
 ###############################################################################
 ################################     URLS      ################################
@@ -149,7 +153,7 @@ def upvote_review():
   review_id = request.args.get('review_id', '')
 
 	reviews = get_db_collection('reviews')
-	reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1}})
+	reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1 }})
 	return 'success'
 
 @app.route("/ajax_downvote_review", methods=['POST'])
@@ -157,14 +161,32 @@ def downvote_review():
   review_id = request.args.get('review_id', '')
 
 	reviews = get_db_collection('reviews')
-	reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1}})
+	reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1 }})
 	return 'success'
+
+@app.route("/filter_by_distance", methods=['GET'])
+def filter_by_distance(restaurants, user_location, distance):
+	'''
+		Takes the user location by address and finds all restaurants within the distance in feet
+	'''
+	restaurants_in_range = []
+	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + to_url_param(user_location) + '&key=' + GOOGLE_API_KEY
+	response = urllib2.urlopen(url).read()
+	location = response['results'][0]['geometry']['location']
+	user_latlng = { 'lat': location['lat'], 'lng': location['lng'] }
+
+	for restaurant in restaurants:
+		restaurant_latlng = { 'lat': restaurant['lat_lng'][0], 'lng': restaurant['lat_lng'[1]] }
+		dist_in_feet = get_distance(user_latlng, restaurant_latlng)
+		if dist_in_feet <= distance:
+			restaurants_in_range.append(restaurant)
+	return restaurants_in_range
 
 ###############################################################################
 ######################     Helper functions      ##############################
 ###############################################################################
 
-# compute the distance given latitude and longitude coordinate positions
+# compute the distance given latitude and longitude coordinate positions in feet
 def get_distance(latlng1, latlng2):
   lat1 = math.radians(latlng1['lat'])
   lng1 = math.radians(latlng1['lng'])
@@ -173,7 +195,8 @@ def get_distance(latlng1, latlng2):
 
   dist = math.acos(
     math.sin(lat1)*math.sin(lat2) + math.cos(lat1)*math.cos(lat2)*math.cos(lng1-lng2))
-  return _dia_miles * dist
+  _dia_miles = 3963.191
+  return _dia_miles * dist * 5280
 
 ###############################################################################
 ################################     DB      ##################################
