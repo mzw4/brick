@@ -1,5 +1,6 @@
 TODO:
 
+integrate distance filter
 other search terms
 figure out photos
 
