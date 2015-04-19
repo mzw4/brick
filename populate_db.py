@@ -6,6 +6,8 @@ import json
 import pprint
 import itertools
 
+from utils import get_db_connection, get_db_collection, to_url_param
+
 CONSUMER_KEY = '41Gqwxv9uNmAarZqhSdOlQ'
 CONSUMER_SECRET = 'Q0LSBcmxBrtM41ufYiuH2EX24FM'
 TOKEN = 'SR1_IiK-T9hqw8DRKyPP4xukmC7PnYhK'
@@ -16,13 +18,6 @@ SEARCH_PATH = '/v2/search/'
 BUSINESS_PATH = '/v2/business/'
 DEFAULT_TERM = 'food'
 GOOGLE_API_KEY = 'AIzaSyAKVuw31IAwXeb5fuz4G8-Uept41q936hg'
-
-def get_db_connection(db):
-    client = MongoClient()
-    return client[db]
-
-def get_db_collection(collection):
-    return get_db_connection('brick')[collection]
 
 def request(host, path, url_params=None):
     """Prepares OAuth authentication and sends the request to the API.
@@ -105,11 +100,6 @@ def query_api(term, location):
 
     return businesses
 
-def to_url_param(param):
-	'''
-		Takes string and converts into appropriate URL parameter by replacing whitespace with +'s
-	'''
-	return '+'.join(param.split(' '))
 
 if __name__ == "__main__":
 	connection = get_db_connection('brick')
