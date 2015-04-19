@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient, ReturnDocument
+from bson.binary import Binary
 from populate_db import to_url_param
 
 import urllib2
@@ -84,7 +85,7 @@ def submit_review():
   user_id = 9000
   price = 9999
   tags = ['tasty', 'flaming hot']
-  photo = 'eadawd'
+  photo = request.files['file'].read() if 'file' in request.files else None
   date = 'some day'
 
   # get collections
@@ -139,7 +140,7 @@ def submit_review():
       'rating': rating,
       'text': review_text,
       'date': date,
-      'photo': photo,
+      'photo': Binary(photo),
       'votes': 0,
     }
     reviews.insert(new_review)
