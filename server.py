@@ -149,13 +149,17 @@ def submit_review():
   return 'success'
 
 @app.route("/ajax_upvote_review", methods=['POST'])
-def upvote_review(review_id):
+def upvote_review():
+  review_id = request.args.get('review_id', '')
+
 	reviews = get_db_collection('reviews')
 	reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1 }})
 	return 'success'
 
 @app.route("/ajax_downvote_review", methods=['POST'])
-def downvote_review(review_id):
+def downvote_review():
+  review_id = request.args.get('review_id', '')
+
 	reviews = get_db_collection('reviews')
 	reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1 }})
 	return 'success'
