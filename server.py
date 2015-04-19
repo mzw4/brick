@@ -275,7 +275,7 @@ def format_data_response(data):
 	formatted_data = {}
 	for d in data:
 		formatted_data[d['_id']] = d
-	return formatted_data
+	return jsonify(formatted_data)
 
 def populate_mock_db():
   get_db_collection('dishes').remove({})
