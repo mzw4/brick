@@ -142,4 +142,3 @@ if __name__ == "__main__":
 				'lat_long': (latitude, longitude)
 			}
 		)
-

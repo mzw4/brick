@@ -1,6 +1,10 @@
 TODO:
 
+integrate distance filter
+  test
 other search terms
+  restaurant
+
 figure out photos
 
 search by tags
