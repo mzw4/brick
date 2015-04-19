@@ -28,13 +28,19 @@
 
 <div id="search">
 	<div class="query-bar">
-		Searching Dishes for:	<u>5-dish</u>
+		Searching <span id="search_type">Dishes</span> for:	<u id="search_term">5-dish</u>
 	</div>
 	<div id="search-results">
 		<div class="flex">
 		  <div ng-repeat="result in results">
 			<div class="dish" ng-click="setDish(result)">
 				<span>
+					<div class="dish-image">
+						{{result.photo}}
+					</div>
+					<div class="dish-name">
+						{{result.name}}
+					</div>
 					<div class="rating">
 						<i class="fa fa-star" ng-repeat="r in calcRating(result.rating, 'full') track by $index"></i>
 						<i class="fa fa-star-half-full" style="margin-left:-5px" ng-repeat="r in calcRating(result.rating, 'half') track by $index"></i>
@@ -42,9 +48,6 @@
 					</div>
 					<div class="price">
 						<i class="fa fa-dollar" ng-repeat="p in calcPrice(result.price) track by $index"></i>
-					</div>
-					<div class="dish-name">
-						{{result.name}}
 					</div>
 					<div class="resto-name">
 						{{result.restaurant_id}}
