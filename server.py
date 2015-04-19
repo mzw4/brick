@@ -1,8 +1,9 @@
 from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient, ReturnDocument
 from bson.binary import Binary
-from populate_db import to_url_param
 from datetime import datetime
+
+from utils import get_db_connection, get_db_collection, to_url_param, get_distance
 
 import pymongo
 import urllib2
@@ -37,12 +38,12 @@ def get_dish_data():
   if request.method == 'GET':
 
     dish = request.args.get('dish', '')
-    sort_by = request.args.get('sort_by', '')
-    sort_dir = request.args.get('sort_dir', '')
+    sort_by = request.args.get('sort_by', 'rating')
+    sort_dir = request.args.get('sort_dir', 'desc')
     location = request.args.get('location', '')
-    distance = request.args.get('distance', '')
+    distance = request.args.get('distance', '10')
     restaurant_id = request.args.get('restaurant_id', '')
-    search_type = request.args.get('search_type', '')
+    search_type = request.args.get('search_type', 'dish')
   # if True:
   #   dish = '5-dish'
   #   sort_by = 'rating'  # price, distance
@@ -229,18 +230,6 @@ def get_name_data():
 ######################     Helper functions      ##############################
 ###############################################################################
 
-# compute the distance given latitude and longitude coordinate positions in feet
-def get_distance(latlng1, latlng2):
-  lat1 = math.radians(latlng1['lat'])
-  lng1 = math.radians(latlng1['lng'])
-  lat2 = math.radians(latlng2['lat'])
-  lng2 = math.radians(latlng2['lng'])
-
-  dist = math.acos(
-    math.sin(lat1)*math.sin(lat2) + math.cos(lat1)*math.cos(lat2)*math.cos(lng1-lng2))
-  _dia_miles = 3963.191
-  return _dia_miles * dist
-
 @app.route("/filter_by_distance", methods=['GET'])
 def filter_by_distance(restaurants, user_location, distance):
   '''
@@ -264,35 +253,29 @@ def filter_by_distance(restaurants, user_location, distance):
 ###############################################################################
 
 
-def get_db_connection(db):
-    client = MongoClient()
-    return client[db]
-
-def get_db_collection(collection):
-    return get_db_connection('brick')[collection]
-
-"""
-Gets the next auto-incrementing id for the specified collection
-"""
 def next_id(collection):
-  counters = get_db_collection('counters')
-  result = counters.find_one_and_update(
-    { '_id': collection },
-    { '$inc': { 'seq': 1 } },
-    upsert=True,
-    return_document=ReturnDocument.AFTER
-  )
-  return result['seq'];
+	"""
+	Gets the next auto-incrementing id for the specified collection
+	"""
+	counters = get_db_collection('counters')
+	result = counters.find_one_and_update(
+		{ '_id': collection },
+		{ '$inc': { 'seq': 1 } },
+		upsert=True,
+		return_document=ReturnDocument.AFTER
+	)
+	return result['seq'];
 
-"""
-Format the db response in an easy to interpret way for the frontend
-Converts the list into a dict of {id -> object}
-"""
+
 def format_data_response(data):
-  formatted_data = {}
-  for d in data:
-    formatted_data[d['_id']] = d
-  return formatted_data
+	"""
+	Format the db response in an easy to interpret way for the frontend
+	Converts the list into a dict of {id -> object}
+	"""
+	formatted_data = {}
+	for d in data:
+		formatted_data[d['_id']] = d
+	return formatted_data
 
 def populate_mock_db():
   get_db_collection('dishes').remove({})
