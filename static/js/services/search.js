@@ -6,7 +6,11 @@ angular.module('dishout')
                 result = data;
             },
             getResult:function () {
-				return $http.get('http://puentes.ca:9000/ajax_get_dish_data?dish=5-dish');
+                var params = result['selection'] + '=' + result['params'];
+                params += '&search_type=' + result['selection'];
+                params += '&location=' + result['location'];
+
+				return $http.get('/ajax_get_dish_data?' + params);
             }
         };
     });

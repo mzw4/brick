@@ -1,13 +1,19 @@
 <div id="home">
+	<div id="cover"></div>
+	<div class="home_title">DishOut</div>
+	<div class="home_subtitle">
+		Dishout is for people who want to make the most out of their meal.<br/>
+		Start typing below to find something delicious.<br/>
+	</div>
+
 	<div id="intro">
-		DishOut is for people who need help deciding what's for dinner.<br />
-		<span class="bold">Start typing below to find something delicious.</span><br />
-		<select class="choice-by">
-			<option>By Dish</option>
-			<option>By Restaurant</option>
-			<option>By Location</option>
+		<select class="choice-by" ng-model="selection">
+			<option value="dish" selected>By Dish</option>
+			<option value="restaurant_id">By Restaurant</option>
+			<option value="location">By Location</option>
 		</select>
 		<input class="dish-search" type="text" ng-model="searchQuery" placeholder="Yum." />
-		<a href="#search" class="search-submit btn btn-default" ng-click="submitSearch(searchQuery)"><span>GO</span></a>
+		<input class="location-search" type="text" ng-model="searchLocation" placeholder="Near..." />
+		<a href="#search" class="search-submit btn btn-default" ng-click="submitSearch(selection, searchQuery, searchLocation)"><span>GO</span></a>
 	</div>
 </div>

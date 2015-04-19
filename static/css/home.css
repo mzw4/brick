@@ -1,0 +1,75 @@
+.nav_buttons {
+  padding: 0 15px;
+}
+
+#home {
+  background-image: url('../img/pork.jpg');
+  background-size: 100%;
+  position: relative;
+}
+
+#home #intro .dish-search {
+  width: 30%;
+}
+#home .location-search {
+  margin-top: 25px;
+  width: 30%;
+  height: 45px;
+  padding: 5px;
+}
+
+#cover {
+  background-color: black;
+  opacity: 0.5;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.home_title {
+  display:block;
+  position:relative;
+  text-align:center;
+  font-size:10vh;
+  color:white;
+  font-family:fabfeltscriptbold;
+}
+.home_subtitle {
+  text-align: center;
+  color:white;
+  z-index: 5;
+  position: relative;
+}
+
+#intro {
+  top: 15%;
+}
+
+.btn {
+  border-radius: 0;
+  border: none;
+}
+
+li a {
+  height: 100%;
+  color: white;
+}
+.nav > li > a:hover,
+.nav > li > a:focus {
+  background-color: white;
+  color: #885388;
+}
+
+.navbar-default .navbar-nav>li>a {
+  color: white;
+}
+
+.vertical_center {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}

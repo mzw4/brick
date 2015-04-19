@@ -1,7 +1,9 @@
 var searchCtrl = function($scope, $rootScope, Search, $http) {
 	var result = Search.getResult().then(function(data) {
 		$scope.results = data.data.dishes;
-		console.log(data.data.dishes)
+		console.log(data.data);
+		$('#search_term').html(data.data.original_query_dish);
+		$('#search_type').html(data.data.search_type);
 	})
 	$scope.dish = {
 		_id: -1,

@@ -35,15 +35,15 @@ def review():
 # dishes and corresponding restaurants
 @app.route("/ajax_get_dish_data", methods=['GET'])
 def get_dish_data():
+  print 'git request'
   if request.method == 'GET':
-
     dish = request.args.get('dish', '')
     sort_by = request.args.get('sort_by', 'rating')
     sort_dir = request.args.get('sort_dir', 'desc')
     location = request.args.get('location', 'new+york')
-    distance = request.args.get('distance', '10')
+    distance = request.args.get('distance', '20')
     restaurant_id = request.args.get('restaurant_id', '')
-    search_type = request.args.get('search_type', 'location')
+    search_type = request.args.get('search_type', 'dish')
   # if True:
   #   dish = '5-dish'
   #   sort_by = 'rating'  # price, distance
@@ -63,20 +63,24 @@ def get_dish_data():
     filtered_restaurants_ids = map(lambda r: r['_id'], filtered_restaurants)
 
     if search_type == 'dish':
+      print 'search by dish'
       # query for dishes matching the specified name or tags and within the specified distance
       dishes_list = list(dishes.find({ 'name': dish, 'restaurant_id': { '$in': filtered_restaurants_ids } })\
         .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
         .limit(MAX_QUERY_LENGTH))
+      formatted_search_type = 'Dishes'
     elif search_type == 'location':
       # query for dishes within the specified distance
       dishes_list = list(dishes.find({ 'restaurant_id': { '$in': filtered_restaurants_ids } })\
         .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
         .limit(MAX_QUERY_LENGTH))
+      formatted_search_type = 'nearby'
     elif search_type == 'restaurant':
       # query for dishes at this restaurant
       dishes_list = list(dishes.find({ 'restaurant_id': restaurant_id })\
         .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
         .limit(MAX_QUERY_LENGTH))
+      formatted_search_type = 'Restaurants'
 
     # get associated restaurant data
     restaurant_ids = set(map(lambda dish: dish['restaurant_id'], dishes_list))
@@ -84,8 +88,8 @@ def get_dish_data():
 
     # get associated review data
     review_ids = []
-    for dish in dishes_list:
-      review_ids += dish['reviews']
+    for d in dishes_list:
+      review_ids += d['reviews']
     reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
 
     # print dishes_list
@@ -94,10 +98,13 @@ def get_dish_data():
 
     # form response
     result = {
+      'original_query_dish': dish,
+      'search_type': formatted_search_type,
       'dishes': format_data_response(dishes_list),
       'restaurants': format_data_response(restaurant_list),
       'reviews': format_data_response(reviews_list),
     }
+    print dishes_list
     return jsonify(result)
 
   else:
@@ -128,7 +135,7 @@ def submit_review():
   #   photo = 'eadawd'
   #   date = 'some day'
 
-    print dish, restaurant, rating, review_text, user_id, price, tags, photo, date
+    # print dish, restaurant, rating, review_text, user_id, price, tags, photo, date
 
     # get collections
     dishes = get_db_collection('dishes')
@@ -177,6 +184,12 @@ def submit_review():
         reviewed_dish_id = dishes.insert(new_dish)
         print 'added new dish ' + str(reviewed_dish_id)
 
+      # if there is a photo, upload it to the photo collection
+      image_id = None
+      if photo:
+        images = get_db_collection('images')
+        image_id = images.insert({ '_id': next_id('images'), 'image_data': photo })
+
       # construct review and insert it
       new_review = {
         '_id': new_review_id,
@@ -186,7 +199,7 @@ def submit_review():
         'rating': rating,
         'text': review_text,
         'date': date,
-        'photo': photo,
+        'photo': image_id,
         'votes': 0,
       }
       reviews.insert(new_review)
@@ -285,18 +298,18 @@ def populate_mock_db():
   get_db_collection('counters').remove({})
 
   dishes = get_db_collection('dishes')
-  for i in range(100):
-    dish = {
-      '_id': next_id('dishes'),
-      'name': str(i%10) + '-dish',
-      'price': 1,
-      'rating': 4.5,
-      'num_ratings': 100,
-      'restaurant_id': 'the-cobra-club-bushwick',
-      'reviews': [],
-      'tags': [],
-    }
-    dishes.insert_one(dish)
+  # for i in range(100):
+  #   dish = {
+  #     '_id': next_id('dishes'),
+  #     'name': str(i%10) + '-dish',
+  #     'price': 1,
+  #     'rating': 4.5,
+  #     'num_ratings': 100,
+  #     'restaurant_id': 'the-cobra-club-bushwick',
+  #     'reviews': [],
+  #     'tags': [],
+  #   }
+  #   dishes.insert_one(dish)
 
   # restaurants = get_db_collection('restaurants')
   # for i in range(15):
@@ -309,10 +322,21 @@ def populate_mock_db():
   #   }
   #   restaurants.insert_one(r)
 
+  dish = {
+    '_id': next_id('dishes'),
+    'name': 'sushi',
+    'price': 15.99,
+    'rating': 4.5,
+    'num_ratings': 10,
+    'restaurant_id': 'the-cobra-club-bushwick',
+    'reviews': [],
+    'tags': [],
+  }
+  dishes.insert_one(dish)
 ###############################################################################
 ###############################     Main      ################################
 ###############################################################################
-# populate_mock_db()
+populate_mock_db()
 # submit_review()
 # get_dish_data()
 # get_name_data()

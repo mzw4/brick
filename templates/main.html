@@ -1,14 +1,15 @@
 <html>
 	<head>
 	  <title>DishOut</title>
-	  <script src="static/lib/jquery.min.js"></script>
-	  <link rel="stylesheet" href="static/lib/bootstrap.min.css" />
-	  <script src="static/lib/bootstrap.min.js"></script>
-	  <script src="static/lib/angular.min.js"></script>
-	  <script src="static/lib/angular-animate.min.js"></script>
-	  <script src="static/lib/angular-route.min.js"></script>
-	  <link rel="stylesheet" href="static/lib/animate.css" />
+	  <script src="static/lib_cool/jquery.min.js"></script>
+	  <link rel="stylesheet" href="static/lib_cool/bootstrap.min.css" />
+	  <script src="static/lib_cool/bootstrap.min.js"></script>
+	  <script src="static/lib_cool/angular.min.js"></script>
+	  <script src="static/lib_cool/angular-animate.min.js"></script>
+	  <script src="static/lib_cool/angular-route.min.js"></script>
+	  <link rel="stylesheet" href="static/lib_cool/animate.css" />
 	  <link rel="stylesheet" href="static/css/style.css" />
+	  <link rel="stylesheet" href="static/css/home.css" />
 	  <link rel="stylesheet" href="static/fonts/FabFelt/stylesheet.css" />
 	  <link rel="stylesheet" href="static/fonts/HankenBook/stylesheet.css" />
 	  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -16,8 +17,15 @@
 	<body ng-app="dishout">
 		<div class="wrapper continer-fluid" ng-controller="mainCtrl">
 			<div class="row navbar">
-				<div class="col-xs-12 title">DishOut</div>
+				<div class="nav_buttons col-xs-6">
+		      <ul class="nav navbar-nav">
+		        <li><a href="/#/"><div class="vertical_center">Search</div></a></li>
+		        <li><a href="/review"><div class="vertical_center">Review a dish</div></a></li>
+			  	</ul>
+				</div>
+				<div class="col-xs-6 title">DishOut</div>
 			</div>
+
 			<div class="main">
 				<div id="load" ng-show="$root.loading">
 					<img src="static/img/loader.gif" />
@@ -25,7 +33,7 @@
 				<div ng-view class="page"></div>
 			</div>
 		</div>
-	  
+
 	  <script src="static/app.js"></script>
 	  <script src="static/js/directives/event-prop.js"></script>
 	  <script src="static/js/services/search.js"></script>
