@@ -111,31 +111,30 @@ def to_url_param(param):
 	'''
 	return '+'.join(param.split(' '))
 
+if __name__ == "__main__":
+    connection = get_db_connection('brick')
+    restaurants = get_db_collection('restaurants')
+    ny_food_response = query_api('food', 'new+york')
+    sf_food_response = query_api('food', 'san+francisco')
+    food_responses = ny_food_response + sf_food_response
+    for entry in food_responses:
+    	location = entry['location']
+    	address = location['address'][0] + ' ' + location['city'] + ', ' + location['state_code'] + ' ' + location['postal_code']
+    	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + to_url_param(address) + '&key=' + GOOGLE_API_KEY
+    	response = json.loads(urllib2.urlopen(url).read())
+    	location = response['results'][0]['geometry']['location']
+    	latitude = location['lat']
+    	longitude = location['lng']
 
-connection = get_db_connection('brick')
-restaurants = get_db_collection('restaurants')
-ny_food_response = query_api('food', 'new+york')
-sf_food_response = query_api('food', 'san+francisco')
-food_responses = ny_food_response + sf_food_response
-for entry in food_responses:
-	location = entry['location']
-	address = location['address'][0] + ' ' + location['city'] + ', ' + location['state_code'] + ' ' + location['postal_code']
-	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + to_url_param(address) + '&key=' + GOOGLE_API_KEY
-	response = json.loads(urllib2.urlopen(url).read())
-	location = response['results'][0]['geometry']['location']
-	latitude = location['lat']
-	longitude = location['lng']
-
-	restaurants.insert(
-		{
-			'_id': entry['id'],
-			'name': entry['name'],
-			'address': address,
-			'phone': entry['phone'] if 'phone' in entry else '',
-			'dishes': [],
-			'type': list(itertools.chain(entry['categories'])),
-			'rating': entry['rating'],
-			'lat_long': (latitude, longitude)
-		}
-	)
-
+    	restaurants.insert(
+    		{
+    			'_id': entry['id'],
+    			'name': entry['name'],
+    			'address': address,
+    			'phone': entry['phone'] if 'phone' in entry else '',
+    			'dishes': [],
+    			'type': list(itertools.chain(entry['categories'])),
+    			'rating': entry['rating'],
+    			'lat_long': (latitude, longitude)
+    		}
+    	)

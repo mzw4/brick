@@ -2,8 +2,10 @@ from flask import Flask, render_template, jsonify, request
 from pymongo import MongoClient, ReturnDocument
 from populate_db import to_url_param
 
+import pymongo
 import urllib2
 import json
+import math
 
 app = Flask(__name__)
 
@@ -31,36 +33,66 @@ def get_dish_data():
     # dish = request.args.get('dish', '')
     # sort_by = request.args.get('sort_by', '')
     # sort_dir = request.args.get('sort_dir', '')
+    # location = request.args.get('location', '')
+    # distance = request.args.get('distance', '')
+    # search_type = request.args.get('search_type', '')
 
   dish = '5-dish'
-  sort_by = 'rating' # price, distance
+  sort_by = 'rating'  # price, distance
   sort_dir = 'desc'
+  location = '775 New York, Brooklyn, New York 11203'
+  distance = 5
+  search_type = 'dish'
 
   # get collections
   dishes = get_db_collection('dishes')
   restaurants = get_db_collection('restaurants')
   reviews = get_db_collection('reviews')
 
-  # query for dishes
-  dishes_list = list(dishes.find({ 'name': dish })\
-    .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
-    .limit(MAX_QUERY_LENGTH))
+
+  # filter restaurants by distance to specified location
+  all_restaurants = restaurants.find()
+  filtered_restaurants = filter_by_distance(all_restaurants, location, float(distance))
+  filtered_restaurants_ids = map(lambda r: r['_id'], filtered_restaurants)
+
+  if search_type == 'dish':
+    # query for dishes matching the specified name or tags and within the specified distance
+    dishes_list = list(dishes.find({ 'name': dish, 'restaurant_id': { '$in': filtered_restaurants_ids } })\
+      .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
+      .limit(MAX_QUERY_LENGTH))
+  elif search_type == 'location':
+    # query for dishes within the specified distance
+    dishes_list = list(dishes.find({ 'restaurant_id': { '$in': filtered_restaurants_ids } })\
+      .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
+      .limit(MAX_QUERY_LENGTH))
+  elif search_type == 'restaurant':
+    # query for dishes at this restaurant
+    # TODO
+    # get restaurant id
+    pass
 
   # get associated restaurant data
-  restaurant_ids = map(lambda dish: dish['restaurant_id'], dishes_list)
-  restaurant_list = restaurants.find({'_id': {'$in': restaurant_ids}});
+  restaurant_ids = set(map(lambda dish: dish['restaurant_id'], dishes_list))
+  restaurant_list = filter(lambda r: r if r['_id'] in restaurant_ids else None, filtered_restaurants)
 
+  # get associated review data
   review_ids = []
   for dish in dishes_list:
     review_ids += dish['reviews']
-  reviews_list = reviews.find({ '_id': { '$in': review_ids } })
+  reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
 
+  # print dishes_list
+  # print restaurant_list
+  # print reviews_list
+
+  # form response
   result = {
     'dishes': format_data_response(dishes_list),
     'restaurants': format_data_response(restaurant_list),
     'reviews': format_data_response(reviews_list),
   }
   return result
+
   # else:
   #   return 'failed'
 
@@ -78,7 +110,7 @@ def submit_review():
   # date = request.args.get('date', '')
 
   dish = '5-dish'
-  restaurant = '5r'
+  restaurant = 'The Cobra Club'
   review_text = 'omgomgomg'
   rating = 5.0
   user_id = 9000
@@ -100,6 +132,7 @@ def submit_review():
 
     # update the dish with the new_review, or add it if it doesn't exist
     reviewed_dish = dishes.find_one({ 'name': dish, 'restaurant_id': reviewed_restaurant_id })
+    
     if reviewed_dish:
       reviewed_dish_id = reviewed_dish['_id']
 
@@ -124,7 +157,7 @@ def submit_review():
         'name': dish,
         'restaurant_id': reviewed_restaurant_id,
         'price': price,
-        'reviews': [new_review],
+        'reviews': [new_review_id],
         'rating': rating,
         'num_ratings': 1,
         'tags': tags
@@ -144,43 +177,25 @@ def submit_review():
     }
     reviews.insert(new_review)
 
-  print dishes.find_one({ '_id': reviewed_dish['_id'] })
-  print [r for r in reviews.find()]
+    print dishes.find_one({ '_id': reviewed_dish['_id'] })
+    print [r for r in reviews.find()]
   return 'success'
 
 @app.route("/ajax_upvote_review", methods=['POST'])
 def upvote_review():
   review_id = request.args.get('review_id', '')
 
-	reviews = get_db_collection('reviews')
-	reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1 }})
-	return 'success'
+  reviews = get_db_collection('reviews')
+  reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1 }})
+  return 'success'
 
 @app.route("/ajax_downvote_review", methods=['POST'])
 def downvote_review():
   review_id = request.args.get('review_id', '')
 
-	reviews = get_db_collection('reviews')
-	reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1 }})
-	return 'success'
-
-@app.route("/filter_by_distance", methods=['GET'])
-def filter_by_distance(restaurants, user_location, distance):
-	'''
-		Takes the user location by address and finds all restaurants within the distance in feet
-	'''
-	restaurants_in_range = []
-	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + to_url_param(user_location) + '&key=' + GOOGLE_API_KEY
-	response = urllib2.urlopen(url).read()
-	location = response['results'][0]['geometry']['location']
-	user_latlng = { 'lat': location['lat'], 'lng': location['lng'] }
-
-	for restaurant in restaurants:
-		restaurant_latlng = { 'lat': restaurant['lat_lng'][0], 'lng': restaurant['lat_lng'[1]] }
-		dist_in_feet = get_distance(user_latlng, restaurant_latlng)
-		if dist_in_feet <= distance:
-			restaurants_in_range.append(restaurant)
-	return restaurants_in_range
+  reviews = get_db_collection('reviews')
+  reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1 }})
+  return 'success'
 
 ###############################################################################
 ######################     Helper functions      ##############################
@@ -196,7 +211,25 @@ def get_distance(latlng1, latlng2):
   dist = math.acos(
     math.sin(lat1)*math.sin(lat2) + math.cos(lat1)*math.cos(lat2)*math.cos(lng1-lng2))
   _dia_miles = 3963.191
-  return _dia_miles * dist * 5280
+  return _dia_miles * dist
+
+@app.route("/filter_by_distance", methods=['GET'])
+def filter_by_distance(restaurants, user_location, distance):
+  '''
+    Takes the user location by address and finds all restaurants within the distance in feet
+  '''
+  restaurants_in_range = []
+  url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + to_url_param(user_location) + '&key=' + GOOGLE_API_KEY
+  response = json.loads(urllib2.urlopen(url).read())
+  location = response['results'][0]['geometry']['location']
+  user_latlng = { 'lat': location['lat'], 'lng': location['lng'] }
+
+  for restaurant in restaurants:
+    restaurant_latlng = { 'lat': restaurant['lat_long'][0], 'lng': restaurant['lat_long'][1] }
+    dist_mi = get_distance(user_latlng, restaurant_latlng)
+    if dist_mi <= distance:
+      restaurants_in_range.append(restaurant)
+  return restaurants_in_range
 
 ###############################################################################
 ################################     DB      ##################################
@@ -234,9 +267,9 @@ def format_data_response(data):
 
 def populate_mock_db():
   get_db_collection('dishes').remove({})
-  get_db_collection('restaurants').remove({})
-  get_db_collection('reviews').remove({})
-  get_db_collection('counters').remove({})
+  # get_db_collection('restaurants').remove({})
+  # get_db_collection('reviews').remove({})
+  # get_db_collection('counters').remove({})
 
   dishes = get_db_collection('dishes')
   for i in range(100):
@@ -246,22 +279,22 @@ def populate_mock_db():
       'price': 1,
       'rating': 4.5,
       'num_ratings': 100,
-      'restaurant_id': i%15,
+      'restaurant_id': 'the-cobra-club-bushwick',
       'reviews': [],
       'tags': [],
     }
     dishes.insert_one(dish)
 
-  restaurants = get_db_collection('restaurants')
-  for i in range(15):
-    r = {
-      '_id': i,
-      'name': str(i) + 'r',
-      'address': 'crazyshit',
-      'rating': 4.5,
-      'type': ['Mexican'],
-    }
-    restaurants.insert_one(r)
+  # restaurants = get_db_collection('restaurants')
+  # for i in range(15):
+  #   r = {
+  #     '_id': i,
+  #     'name': str(i) + 'r',
+  #     'address': 'crazyshit',
+  #     'rating': 4.5,
+  #     'type': ['Mexican'],
+  #   }
+  #   restaurants.insert_one(r)
 
 ###############################################################################
 ###############################     Main      ################################
