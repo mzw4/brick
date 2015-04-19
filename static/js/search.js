@@ -1,7 +1,13 @@
 var searchCtrl = function($scope, $rootScope, Search, $http) {
 	var result = Search.getResult().then(function(data) {
 		$scope.results = data.data.dishes;
-		console.log(data.data);
+		$scope.photos = data.data.photos;
+		$scope.restaurants = data.data.restaurants;
+		$scope.reviews = data.data.reviews;
+
+		console.log($scope.results);
+		console.log($scope.photos[$scope.reviews[$scope.results[1].reviews[0]].photo].image_data);
+		
 		$('#search_term').html(data.data.original_query_dish);
 		$('#search_type').html(data.data.search_type);
 	})
@@ -12,7 +18,7 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 		price: 0,
 		rating: 0,
 		restaurant_id: "",
-		reviews: []
+		reviews: [],
 	}
 	$scope.calcRating = function(rating, type) {
 		if (type=='full') {
@@ -36,7 +42,8 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 	$scope.setDish = function(dish) {
 		$scope.dish = dish;
 		$scope.dish.active = true;
-		$scope.dish.reviews = new Array(10);
+		// $scope.dish.reviews = new Array(10);
+
 	}
 }
 

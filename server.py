@@ -56,12 +56,14 @@ def get_dish_data():
     dishes = get_db_collection('dishes')
     restaurants = get_db_collection('restaurants')
     reviews = get_db_collection('reviews')
+    images = get_db_collection('images')
 
     # filter restaurants by distance to specified location
     all_restaurants = restaurants.find()
     filtered_restaurants = filter_by_distance(all_restaurants, location, float(distance))
     filtered_restaurants_ids = map(lambda r: r['_id'], filtered_restaurants)
 
+    dishes_list = []
     if search_type == 'dish':
       print 'search by dish'
       # query for dishes matching the specified name or tags and within the specified distance
@@ -81,6 +83,8 @@ def get_dish_data():
         .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
         .limit(MAX_QUERY_LENGTH))
       formatted_search_type = 'Restaurants'
+    else:
+      print 'INVALID SEARCH TYPE'
 
     # get associated restaurant data
     restaurant_ids = set(map(lambda dish: dish['restaurant_id'], dishes_list))
@@ -91,6 +95,12 @@ def get_dish_data():
     for d in dishes_list:
       review_ids += d['reviews']
     reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
+
+    photo_ids = []
+    for r in reviews_list:
+      photo_ids += [r['photo']]
+    print photo_ids
+    photos_list = list(images.find({ '_id': { '$in': photo_ids } }))
 
     # print dishes_list
     # print restaurant_list
@@ -103,8 +113,9 @@ def get_dish_data():
       'dishes': format_data_response(dishes_list),
       'restaurants': format_data_response(restaurant_list),
       'reviews': format_data_response(reviews_list),
+      'photos': format_data_response(photos_list)
     }
-    print dishes_list
+    print photos_list
     return jsonify(result)
 
   else:
@@ -329,6 +340,17 @@ def populate_mock_db():
     'rating': 4.5,
     'num_ratings': 10,
     'restaurant_id': 'the-cobra-club-bushwick',
+    'reviews': [],
+    'tags': [],
+  }
+  dishes.insert_one(dish)
+  dish = {
+    '_id': next_id('dishes'),
+    'name': 'sushi',
+    'price': 15.99,
+    'rating': 4.5,
+    'num_ratings': 10,
+    'restaurant_id': 'shabu-house-san-francisco-3',
     'reviews': [],
     'tags': [],
   }

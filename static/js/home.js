@@ -15,6 +15,9 @@ var homeCtrl = function($scope, $rootScope, $animate, $timeout, Search) {
     "AK" : "Alaska",
     "AS" : "American Samoa"
   };
+
+  $('.dish-search').val('sushi');
+  $('.location-search').val('354 Clement St San Francisco, CA 94118');
 }
 
 angular
