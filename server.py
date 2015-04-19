@@ -7,6 +7,7 @@ import pymongo
 import urllib2
 import json
 import math
+import base64
 
 app = Flask(__name__)
 
@@ -24,7 +25,8 @@ GOOGLE_API_KEY = 'AIzaSyAKVuw31IAwXeb5fuz4G8-Uept41q936hg'
 @app.route("/")
 def main():
   get_dish_data()
-  return render_template('main.html')
+  #return render_template('main.html')
+  return render_template('form.html')
 
 # dishes and corresponding restaurants
 @app.route("/ajax_get_dish_data", methods=['GET'])
@@ -107,17 +109,17 @@ def submit_review():
   # user_id = request.args.get('user_id', '')
   # price = request.args.get('price', '')
   # tags = request.args.get('tags', '')
-  # photo = request.args.get('photo', '')
   # date = request.args.get('date', '')
+  photo = request.files['file'].read() if 'file' in request.files else None
 
   dish = '5-dish'
-  restaurant = 'The Cobra Club'
+  restaurant = 'Andersen Bakery'
   review_text = 'omgomgomg'
   rating = 5.0
   user_id = 9000
   price = 9999
   tags = ['tasty', 'flaming hot']
-  photo = request.files['file'].read() if 'file' in request.files else None
+  #photo = 'qweee'
   date = 'some day'
 
   # get collections
@@ -126,6 +128,7 @@ def submit_review():
   reviews = get_db_collection('reviews')
 
   reviewed_restaurant = restaurants.find_one({ 'name': restaurant })
+
   if reviewed_restaurant:
     reviewed_restaurant_id = reviewed_restaurant['_id']
     reviewed_dish_id = None
@@ -176,11 +179,13 @@ def submit_review():
       'photo': Binary(photo),
       'votes': 0,
     }
+
     reviews.insert(new_review)
 
     print dishes.find_one({ '_id': reviewed_dish['_id'] })
     print [r for r in reviews.find()]
   return 'success'
+  #return render_template('test.html', image=base64.b64encode(test_review['photo']))
 
 @app.route("/ajax_upvote_review", methods=['POST'])
 def upvote_review():
@@ -235,6 +240,7 @@ def filter_by_distance(restaurants, user_location, distance):
 ###############################################################################
 ################################     DB      ##################################
 ###############################################################################
+
 
 def get_db_connection(db):
     client = MongoClient()
@@ -300,9 +306,9 @@ def populate_mock_db():
 ###############################################################################
 ###############################     Main      ################################
 ###############################################################################
-populate_mock_db()
-submit_review()
-get_dish_data()
+#populate_mock_db()
+#submit_review()
+#get_dish_data()
 
 if __name__ == "__main__":
     app.run(port=5000)
