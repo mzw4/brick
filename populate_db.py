@@ -126,6 +126,10 @@ for entry in food_responses:
 	latitude = location['lat']
 	longitude = location['lng']
 
+	categories = []
+	for category in entry['categories']:
+		categories += category
+
 	restaurants.insert(
 		{
 			'_id': entry['id'],
@@ -133,7 +137,7 @@ for entry in food_responses:
 			'address': address,
 			'phone': entry['phone'] if 'phone' in entry else '',
 			'dishes': [],
-			'type': list(itertools.chain(entry['categories'])),
+			'type': categories,
 			'rating': entry['rating'],
 			'lat_long': (latitude, longitude)
 		}
