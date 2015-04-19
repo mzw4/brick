@@ -40,7 +40,7 @@ def get_dish_data():
     dish = request.args.get('dish', '')
     sort_by = request.args.get('sort_by', 'rating')
     sort_dir = request.args.get('sort_dir', 'desc')
-    location = request.args.get('location', '')
+    location = request.args.get('location', 'new+york')
     distance = request.args.get('distance', '10')
     restaurant_id = request.args.get('restaurant_id', '')
     search_type = request.args.get('search_type', 'dish')
