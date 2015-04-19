@@ -47,9 +47,6 @@ $(function () {
   // initialize dropzone
   // $image_upload_form.dropzone();
   var myDropzone = new Dropzone("#image_upload_form");
-  myDropzone.on("addedfile", function(file) {
-    console.log(file);    
-  });
   myDropzone.on("complete", function(file) {
     console.log(file);
   });
