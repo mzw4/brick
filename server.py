@@ -94,9 +94,6 @@ def get_dish_data():
 
     # form response
     result = {
-    	#'dishes': format_dish_response(dishes_list),
-    	#'restaurants': format_restaurant_response(restaurant_list),
-    	#'reviews': format_review_response(reviews_list)
       'dishes': format_data_response(dishes_list),
       'restaurants': format_data_response(restaurant_list),
       'reviews': format_data_response(reviews_list),
