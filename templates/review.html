@@ -1,64 +1,64 @@
 
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/review.css') }}" />
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="{{ url_for('static', filename='js/typeahead.bundle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.barrating.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/review.js') }}"></script>
 
 <div id="content_panel">
   <div id="input_panel" class="text_center row">
-    <div class="main_text text_large">I spent money on...</div>
+    <div class="main_text text_large">Submit a review.</div>
 
-    <form id="input_form">
-      {% csrf_token %}
+    <form id="input_form" method="post" enctype="multipart/form-data">
 
       <div class="form-horizontal">
         <div class="col-sm-offset-3 col-sm-5">
+          <input type='file' name='file' id='take-picture' accept='image/*'>
+          {% if image %}
+            <img src="data:image/jpeg;base64,{{ image }}" />
+          {% endif %}
 
           <div class="form-group">
-            <div id="item_field_group" class="input_form_group">
-              <label for="item_field" class="col-sm-2 control-label">Item</label>
-              <div class="form-inline col-sm-10">
-                <div class="typeahead-container">
-                  <div class="typeahead-field">
-                    <span class="typeahead-query">
-                      <input type="text" class="typeahead form-control" id="item_field" placeholder="Item">
-                    </span>
-                  </div>
-                </div>
-
-
-                <div id="amount_field_group" class="input-group">
-                  <span class="input-group-addon" id="currency_addon">{{currency}}</span>
-                  <input type="number" step="0.01" placeholder="0.00" class="form-control" id="amount_field" describedby="currency_addon">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div id="category_field_group" class="form-group input_form_group">
-            <label for="category_field" class="col-sm-2 control-label">Category</label>
+            <label for="dish_field" class="col-sm-2 control-label">Dish:</label>
             <div class="col-sm-10">
-              <div class="input-group">
-                <input type="text" id="category_field" class="form-control" aria-label="...">
-
-                <div class="input-group-btn">
-                  <button id="category_expand_button" type="button" class="btn btn-default"> <span class="caret"></span></button>
-                </div><!-- /btn-group -->
+              <div class="typeahead-container">
+                <div class="typeahead-field">
+                  <span class="typeahead-query">
+                    <input type="text" class="typeahead form-control" id="dish_field" placeholder="">
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="restaurant_field" class="col-sm-2 control-label">Restaurant:</label>
+            <div class="col-sm-10">
+              <div class="typeahead-container">
+                <div class="typeahead-field">
+                  <span class="typeahead-query">
+                    <input type="text" class="typeahead form-control" id="restaurant_field" placeholder="">
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div id="date_field_group" class="form-group input_form_group">
-            <label for="date_field" class="col-sm-2 control-label">Date</label>
-            <div class="form-inline col-sm-10">
-              <input type="date" class="form-control pull-left" id="date_field">
-              <input type="time" class="form-control" id="time_field">
-              <button id="now_button" class="btn btn-default">Now</button>
+          <div class="col-sm-offset-2">
+            <div class="rating-star">
+              <select id="rating_field">
+                 <option value="1">1</option>
+                 <option value="2">2</option>
+                 <option value="3">3</option>
+                 <option value="4">4</option>
+                 <option value="5">5</option>
+              </select>
             </div>
           </div>
 
           <div id="description_field_group" class="form-group input_form_group">
-            <label for="category_field" class="col-sm-2 control-label">Description</label>
+            <label for="description_field" class="col-sm-2 control-label">Description</label>
             <div class="col-sm-10">
               <textarea class="form-control" id="description_field" rows="3"></textarea>
             </div>
