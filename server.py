@@ -7,9 +7,10 @@ import pymongo
 import urllib2
 import json
 import math
-import base64
+import ast
 
-app = Flask(__name__, static_folder='/home/pango/projects/dishout/static')
+app = Flask(__name__)
+
 ###############################################################################
 ################################     Constants      ###########################
 ###############################################################################
@@ -32,7 +33,7 @@ def review():
 # dishes and corresponding restaurants
 @app.route("/ajax_get_dish_data", methods=['GET'])
 def get_dish_data():
-  # if request.method == 'POST':
+  # if request.method == 'GET':
 
     # dish = request.args.get('dish', '')
     # sort_by = request.args.get('sort_by', '')
@@ -102,95 +103,100 @@ def get_dish_data():
 
 @app.route("/ajax_submit_review", methods=['POST'])
 def submit_review():
-  # if request.method == 'POST':
-  # dish = request.args.get('dish', '')
-  # restaurant = request.args.get('restaurant', '')
-  # rating = request.args.get('rating', '')
-  # description = request.args.get('description', '')
-  # user_id = request.args.get('user_id', '')
-  # price = request.args.get('price', '')
-  # tags = request.args.get('tags', '')
-  # date = request.args.get('date', '')
-  photo = request.files['file'].read() if 'file' in request.files else None
+  if request.method == 'POST':
+    dish = request.form.get('dish', '')
+    restaurant = request.form.get('restaurant', '')
+    rating = int(request.form.get('rating', ''))
+    review_text = request.form.get('review_text', '')
+    user_id = request.form.get('user_id', '')
+    price = request.form.get('price', '')
+    tags = ast.literal_eval(request.form.get('tags', ''))
+    photo = request.form.get('photo', '')
+    date = request.form.get('date', '')
 
-  dish = '5-dish'
-  restaurant = 'Andersen Bakery'
-  review_text = 'omgomgomg'
-  rating = 5.0
-  user_id = 9000
-  price = 9999
-  tags = ['tasty', 'flaming hot']
-  #photo = 'qweee'
-  date = 'some day'
+  # if True:
+  #   dish = '5-disddh'
+  #   restaurant = 'The Cobra Club'
+  #   review_text = 'omgomgomg'
+  #   rating = 5.0
+  #   user_id = '9000'
+  #   price = '9999'
+  #   tags = ['tasty', 'flaming hot']
+  #   photo = 'eadawd'
+  #   date = 'some day'
 
-  # get collections
-  dishes = get_db_collection('dishes')
-  restaurants = get_db_collection('restaurants')
-  reviews = get_db_collection('reviews')
+    print dish, restaurant, rating, review_text, user_id, price, tags, photo, date
 
-  reviewed_restaurant = restaurants.find_one({ 'name': restaurant })
+    # get collections
+    dishes = get_db_collection('dishes')
+    restaurants = get_db_collection('restaurants')
+    reviews = get_db_collection('reviews')
 
-  if reviewed_restaurant:
-    reviewed_restaurant_id = reviewed_restaurant['_id']
-    reviewed_dish_id = None
-    new_review_id = next_id('reviews')
+    reviewed_restaurant = restaurants.find_one({ 'name': restaurant })
+    if reviewed_restaurant:
 
-    # update the dish with the new_review, or add it if it doesn't exist
-    reviewed_dish = dishes.find_one({ 'name': dish, 'restaurant_id': reviewed_restaurant_id })
-    
-    if reviewed_dish:
-      reviewed_dish_id = reviewed_dish['_id']
+      reviewed_restaurant_id = reviewed_restaurant['_id']
+      reviewed_dish_id = None
+      new_review_id = next_id('reviews')
 
-      update_result = dishes.update_one(
-        { '_id': reviewed_dish_id },
-        {
-          '$push': {
-            'reviews': new_review_id,         # add new_review
-            'tags': { '$each': tags }         # add tags
+      # update the dish with the new_review, or add it if it doesn't exist
+      reviewed_dish = dishes.find_one({ 'name': dish, 'restaurant_id': reviewed_restaurant_id })
+      if reviewed_dish:
+        reviewed_dish_id = reviewed_dish['_id']
+        num_ratings = int(reviewed_dish['num_ratings'])
+
+        update_result = dishes.update_one(
+          { '_id': reviewed_dish_id },
+          {
+            '$push': {
+              'reviews': new_review_id,         # add new_review
+              'tags': { '$each': tags }         # add tags
+            },
+            '$inc': { 'num_ratings': 1 },       # increment num_ratings values
+            '$set': {                           # update running average of rating
+              'rating': (float(reviewed_dish['rating']) * int(num_ratings) + int(rating)) / (int(num_ratings) + 1)
+            }
           },
-          '$inc': { 'num_ratings': 1 },       # increment num_ratings values
-          '$set': {                           # update running average of rating
-            'rating': (reviewed_dish['rating'] * reviewed_dish['num_ratings'] + rating) / (reviewed_dish['num_ratings'] + 1)
-          }
-        },
-      )
-      print update_result.raw_result
-    else:
-      # add the dish
-      reviewed_dish_id = dishes.insert({
-        '_id': next_id('dishes'),
-        'name': dish,
+        )
+        print update_result.raw_result
+      else:
+        # add the dish
+        new_dish = {
+          '_id': next_id('dishes'),
+          'name': dish,
+          'restaurant_id': reviewed_restaurant_id,
+          'price': price,
+          'reviews': [new_review_id],
+          'rating': rating,
+          'num_ratings': 1,
+          'tags': tags
+        }
+        reviewed_dish_id = dishes.insert(new_dish)
+        print 'added new dish ' + str(reviewed_dish_id)
+
+      # construct review and insert it
+      new_review = {
+        '_id': new_review_id,
+        'user_id': user_id,
+        'dish_id': reviewed_dish_id,
         'restaurant_id': reviewed_restaurant_id,
-        'price': price,
-        'reviews': [new_review_id],
         'rating': rating,
-        'num_ratings': 1,
-        'tags': tags
-      })
+        'text': review_text,
+        'date': date,
+        'photo': photo,
+        'votes': 0,
+      }
+      reviews.insert(new_review)
 
-    # construct review and insert it
-    new_review = {
-      '_id': new_review_id,
-      'user_id': user_id,
-      'dish_id': reviewed_dish_id,
-      'restaurant_id': reviewed_restaurant_id,
-      'rating': rating,
-      'text': review_text,
-      'date': date,
-      'photo': Binary(photo),
-      'votes': 0,
-    }
-
-    reviews.insert(new_review)
-
-    print dishes.find_one({ '_id': reviewed_dish['_id'] })
-    print [r for r in reviews.find()]
-  return 'success'
-  #return render_template('test.html', image=base64.b64encode(test_review['photo']))
+      print "ADDED REVIEW"
+      print [r for r in reviews.find({ '_id': new_review_id })]
+    return 'success'
+  else:
+    return 'fail'
 
 @app.route("/ajax_upvote_review", methods=['POST'])
 def upvote_review():
-  review_id = request.args.get('review_id', '')
+  review_id = request.form.get('review_id', '')
 
   reviews = get_db_collection('reviews')
   reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1 }})
@@ -198,7 +204,7 @@ def upvote_review():
 
 @app.route("/ajax_downvote_review", methods=['POST'])
 def downvote_review():
-  review_id = request.args.get('review_id', '')
+  review_id = request.form.get('review_id', '')
 
   reviews = get_db_collection('reviews')
   reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1 }})
@@ -277,12 +283,12 @@ def populate_mock_db():
   get_db_collection('dishes').remove({})
   # get_db_collection('restaurants').remove({})
   # get_db_collection('reviews').remove({})
-  # get_db_collection('counters').remove({})
+  get_db_collection('counters').remove({})
 
   dishes = get_db_collection('dishes')
   for i in range(100):
     dish = {
-      '_id': i,
+      '_id': next_id('dishes'),
       'name': str(i%10) + '-dish',
       'price': 1,
       'rating': 4.5,
@@ -312,7 +318,5 @@ def populate_mock_db():
 #get_dish_data()
 
 if __name__ == "__main__":
-    populate_mock_db()
-    app.run(
-	host="0.0.0.0",
-	port=9000)
+  app.debug = True
+  app.run(host="0.0.0.0", port=9000)
