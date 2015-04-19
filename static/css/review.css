@@ -16,7 +16,7 @@ body {
   height: 400px;
 }
 
-#img_wrapper {
+#image_wrapper {
   height: 400px;
   width: 100%;
   margin-bottom: 30px;
@@ -26,6 +26,47 @@ body {
 #img_display {
   height: 400px;
   max-width: 100%;
+  display: none;
+}
+
+#upload_help_text {
+  color: white;
+}
+
+/* Dropzone stlying */
+
+.dropzone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border: none;
+  opacity: 0;
+  color: white;
+  padding: 0;
+  margin: none;
+}
+
+.dropzone:hover {
+  cursor: pointer;
+  opacity: 0.2;
+  background-color: black;
+}
+
+.dropzone .dz-message {
+  margin: 0;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+#hide {
+  display: none;
+}
+.dz-preview {
   display: none;
 }
 
@@ -111,6 +152,8 @@ textarea {
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    overflow: auto;
+    max-height: 300px;
 }
 
 .tt-suggestion {
@@ -162,10 +205,4 @@ only screen and (min-device-pixel-ratio : 1.5),
         background: url('../img/star@2x.png');
         background-size: 24px 48px;
     }
-}
-
-/* Dropzone stlying */
-
-.dropzone {
-  
 }
