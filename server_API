@@ -1,0 +1,90 @@
+
+====== OBJECT SCHEMA ======
+
+dish = {
+  '_id': 123,
+  'name': 'good dish',
+  'price': 1,              <- 1-5 price range
+  'rating': 4.5,
+  'num_ratings': 100,
+  'restaurant_id': 123,
+  'reviews': [1, 3, 4],     <- list of ids
+  'tags': ['something', 'something'],
+}
+
+restaurant {
+  '_id': 123,
+  'name': 'Chipotle',
+  'address': 'everywhere',
+  'phone': 999-999-9999,
+  'dishes': [2, 3, 5],    <- dish ids
+  'type': ['Mexican', 'Canadian'],
+  'rating': 5
+  'lat': 55.4
+  'lng': 43.7
+}
+
+review = {
+  '_id': 123,
+  'user_id': 123,
+  'dish_id': 123,
+  'restaurant_id': 123,
+  'rating': 4.3,
+  'text': 'this dish sucks',
+  'date': date,             <- date object
+  'photo': photo,       <- we'll figure that out
+  'votes': 0,         <- this is how much people like this review, a highest votes is the front page review in results
+}
+
+====== AJAX FUNCTIONS ======
+
+/ajax_get_dish_data
+get_dish_data()
+
+GET args:
+  dish = '5-dish'
+  sort_by = 'rating' or (price, distance)
+  sort_dir = 'desc'
+
+return:
+  {
+    'dishes': { id -> dish object }
+    'restaurants': { id -> restaurant object }
+    'reviews': { id -> review object }
+  }
+
+
+/ajax_submit_review
+submit_review()
+
+POST args:
+  dish = '5-dish'
+  restaurant = '5r'
+  review_text = 'omgomgomg'
+  rating = 5.0
+  user_id = 9000
+  price = 9999
+  tags = ['tasty', 'flaming hot']
+  photo = ?
+  date = 'some day' (date object)
+
+return:
+  'success'
+  'fail'
+
+
+/ajax_upvote_review
+upvote_review
+
+args:
+  review_id: 123
+return:
+  'success/fail'
+
+
+/ajax_downvote_review
+
+args:
+  review_id: 123
+return:
+  'success/fail'
