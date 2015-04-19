@@ -77,7 +77,6 @@ def get_dish_data():
       dishes_list = list(dishes.find({ 'restaurant_id': restaurant_id })\
         .sort(sort_by,  (pymongo.DESCENDING if sort_dir == 'desc' else pymongo.ASCENDING))\
         .limit(MAX_QUERY_LENGTH))
-      print dishes_list
 
     # get associated restaurant data
     restaurant_ids = set(map(lambda dish: dish['restaurant_id'], dishes_list))
@@ -309,6 +308,7 @@ def populate_mock_db():
   #     'type': ['Mexican'],
   #   }
   #   restaurants.insert_one(r)
+
 
 ###############################################################################
 ###############################     Main      ################################

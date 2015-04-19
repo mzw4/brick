@@ -4,15 +4,16 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 		console.log(data.data.dishes)
 	})
 	$scope.dish = {
-		_id: -1,
-		name: "",
-		num_ratings: 0,
-		price: 0,
-		rating: 0,
-		restaurant_id: "",
-		reviews: []
+		_id: result['_id'],
+		name: result['name'],
+		num_ratings: result['num_ratings'],
+		price: result['price'],
+		rating: result['rating'],
+		restaurant_id: result['restaurant_id'],
+		reviews: result['reviews']
 	}
 	$scope.calcRating = function(rating, type) {
+		console.log(rating);
 		if (type=='full') {
 			return new Array(Math.floor(rating));
 		}
@@ -34,7 +35,7 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 	$scope.setDish = function(dish) {
 		$scope.dish = dish;
 		$scope.dish.active = true;
-		$scope.dish.reviews = new Array(10);
+		//$scope.dish.reviews = dish.reviews;
 	}
 }
 

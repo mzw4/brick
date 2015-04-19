@@ -20,8 +20,8 @@
 			<div class="review-title">
 				Reviews
 			</div><br />
-			<div class="review" ng-repeat="review in dish.reviews track by $index">
-				
+			<div class="review" ng-repeat="review in dish.reviews">
+				{{ review.text }}
 			</div>
 		</div>
 </div>
