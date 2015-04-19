@@ -1,7 +1,7 @@
 var homeCtrl = function($scope, $rootScope, $animate, $timeout, Search) {
 	
-	$scope.submitSearch = function(selection, params) {
-		Search.saveResult({'selection': selection, 'params': params});
+	$scope.submitSearch = function(selection, query, location) {
+		Search.saveResult({'selection': selection, 'params': query, 'location': location });
 	}
 
 	$scope.options = {

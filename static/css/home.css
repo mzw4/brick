@@ -8,6 +8,16 @@
   position: relative;
 }
 
+#home #intro .dish-search {
+  width: 30%;
+}
+#home .location-search {
+  margin-top: 25px;
+  width: 30%;
+  height: 45px;
+  padding: 5px;
+}
+
 #cover {
   background-color: black;
   opacity: 0.5;

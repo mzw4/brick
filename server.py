@@ -41,7 +41,7 @@ def get_dish_data():
     sort_by = request.args.get('sort_by', 'rating')
     sort_dir = request.args.get('sort_dir', 'desc')
     location = request.args.get('location', 'new+york')
-    distance = request.args.get('distance', '10')
+    distance = request.args.get('distance', '20')
     restaurant_id = request.args.get('restaurant_id', '')
     search_type = request.args.get('search_type', 'dish')
   # if True:
@@ -88,8 +88,8 @@ def get_dish_data():
 
     # get associated review data
     review_ids = []
-    for dish in dishes_list:
-      review_ids += dish['reviews']
+    for d in dishes_list:
+      review_ids += d['reviews']
     reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
 
     # print dishes_list
@@ -298,18 +298,18 @@ def populate_mock_db():
   get_db_collection('counters').remove({})
 
   dishes = get_db_collection('dishes')
-  for i in range(100):
-    dish = {
-      '_id': next_id('dishes'),
-      'name': str(i%10) + '-dish',
-      'price': 1,
-      'rating': 4.5,
-      'num_ratings': 100,
-      'restaurant_id': 'the-cobra-club-bushwick',
-      'reviews': [],
-      'tags': [],
-    }
-    dishes.insert_one(dish)
+  # for i in range(100):
+  #   dish = {
+  #     '_id': next_id('dishes'),
+  #     'name': str(i%10) + '-dish',
+  #     'price': 1,
+  #     'rating': 4.5,
+  #     'num_ratings': 100,
+  #     'restaurant_id': 'the-cobra-club-bushwick',
+  #     'reviews': [],
+  #     'tags': [],
+  #   }
+  #   dishes.insert_one(dish)
 
   # restaurants = get_db_collection('restaurants')
   # for i in range(15):
@@ -322,10 +322,21 @@ def populate_mock_db():
   #   }
   #   restaurants.insert_one(r)
 
+  dish = {
+    '_id': next_id('dishes'),
+    'name': 'sushi',
+    'price': 15.99,
+    'rating': 4.5,
+    'num_ratings': 10,
+    'restaurant_id': 'the-cobra-club-bushwick',
+    'reviews': [],
+    'tags': [],
+  }
+  dishes.insert_one(dish)
 ###############################################################################
 ###############################     Main      ################################
 ###############################################################################
-# populate_mock_db()
+populate_mock_db()
 # submit_review()
 # get_dish_data()
 # get_name_data()

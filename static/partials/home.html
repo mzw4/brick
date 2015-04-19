@@ -5,6 +5,7 @@
 		Dishout is for people who want to make the most out of their meal.<br/>
 		Start typing below to find something delicious.<br/>
 	</div>
+
 	<div id="intro">
 		<select class="choice-by" ng-model="selection">
 			<option value="dish" selected>By Dish</option>
@@ -12,6 +13,7 @@
 			<option value="location">By Location</option>
 		</select>
 		<input class="dish-search" type="text" ng-model="searchQuery" placeholder="Yum." />
-		<a href="#search" class="search-submit btn btn-default" ng-click="submitSearch(selection, searchQuery)"><span>GO</span></a>
+		<input class="location-search" type="text" ng-model="searchLocation" placeholder="Near..." />
+		<a href="#search" class="search-submit btn btn-default" ng-click="submitSearch(selection, searchQuery, searchLocation)"><span>GO</span></a>
 	</div>
 </div>
