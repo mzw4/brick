@@ -1,0 +1,84 @@
+
+<link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="static/css/style.css" />
+<link rel="stylesheet" type="text/css" href="static/css/review.css" />
+
+<script src="static/js/lib_cool/typeahead.bundle.js"></script>
+<script src="static/js/lib_cool/jquery.barrating.min.js"></script>
+<script src="static/js/lib_cool/dropzone.js"></script>
+<script src="static/js/review.js"></script>
+
+<div id="content_panel">
+  <div id="input_panel" class="text_center row">
+    <div class="main_text text_large">Submit a review.</div>
+
+    <div id="input_wrapper" class="col-sm-offset-1 col-sm-5">
+      <form id="input_form" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="dish_field" class="col-sm-3 control-label">Dish:</label>
+          <div class="col-sm-9">
+            <div class="typeahead-container">
+              <div class="typeahead-field">
+                <span class="typeahead-query">
+                  <input type="text" class="typeahead form-control" id="dish_field" placeholder="">
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="restaurant_field" class="col-sm-3 control-label">Restaurant:</label>
+          <div class="col-sm-9">
+            <div class="typeahead-container">
+              <div class="typeahead-field">
+                <span class="typeahead-query">
+                  <input type="text" class="typeahead form-control" id="restaurant_field" placeholder="">
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-offset-3">
+          <div class="rating-star">
+            <select id="rating_field">
+               <option value="1">1</option>
+               <option value="2">2</option>
+               <option value="3">3</option>
+               <option value="4">4</option>
+               <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="description_field_group" class="form-group input_form_group">
+          <label for="description_field" class="col-sm-3 control-label">Description</label>
+          <div class="col-sm-9">
+            <textarea class="form-control" id="description_field" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div id="button_form_group" class="form-group input_form_group">
+          <div class="col-sm-offset-3 col-sm-9 text_left">
+            <button id="submit_button" type="submit" class="btn btn-default">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+
+    <div class="col-sm-5">
+      <div id="image_wrapper">
+        <img id="img_display" src=""/>
+        <div id="upload_help_text" class="vertical_center">Drag and drop a photo to upload it.</div>
+        <form action="#" class="dropzone" id="image_upload_form">
+        </form>
+      </div>
+      <div id="hide"></div>
+    </div>
+
+
+    <div class="error_text pull-left"></div>
+  </div>
+</div>
