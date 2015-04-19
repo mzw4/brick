@@ -11,12 +11,12 @@ $(function () {
   $restaurant_field = $('#restaurant_field');
   $dish_field = $('#dish_field');
   $description_field = $('#description_field');
-  $image_field = $('#image_field');
   $img_display = $('#img_display');
   $image_upload_form = $('#image_upload_form');
   $submit_button = $('#submit_button');
+  $upload_help_text = $('#upload_help_text');
 
-  $restaurant_field.val('The Cobra Club');
+  // $restaurant_field.val('The Cobra Club');
 
   // initialize star rating input
   $rating_field.barrating({
@@ -33,22 +33,22 @@ $(function () {
     ajax_submit_review()
   });
 
+  // initialize dropzone
+  var myDropzone = new Dropzone("#image_upload_form", {
+    previewsContainer: '#hide', // hide that crappy preview thing
+    dictDefaultMessage: ''
+  });
+
   // image upload callback
-  $image_field.on('change', function(event) {
+  myDropzone.on("complete", function(file) {
     var reader = new FileReader();
     reader.onload = function(e) {
       var binary = e.target.result;
       uploaded_photo = binary;
       $img_display.attr('src', binary).hide().fadeIn();
+      $upload_help_text.fadeOut();
     }
-    reader.readAsDataURL(this.files[0]);
-  });
-
-  // initialize dropzone
-  // $image_upload_form.dropzone();
-  var myDropzone = new Dropzone("#image_upload_form");
-  myDropzone.on("complete", function(file) {
-    console.log(file);
+    reader.readAsDataURL(file);
   });
 
   // load name data and initialize typeahead

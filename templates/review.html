@@ -8,8 +8,6 @@
 <script src="{{ url_for('static', filename='js/lib_cool/dropzone.js') }}"></script>
 <script src="{{ url_for('static', filename='js/review.js') }}"></script>
 
-<script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
-<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
 
 <div id="content_panel">
   <div id="input_panel" class="text_center row">
@@ -72,12 +70,13 @@
 
 
     <div class="col-sm-5">
-      <div id="img_wrapper">
+      <div id="image_wrapper">
         <img id="img_display" src=""/>
+        <div id="upload_help_text" class="vertical_center">Drag and drop a photo to upload it.</div>
+        <form action="#" class="dropzone" id="image_upload_form">
+        </form>
       </div>
-      <form action="/file-upload" class="dropzone" id="image_upload_form">
-        <input type='file' name='file' id='image_field' accept='image/*'>
-      </form>
+      <div id="hide"></div>
     </div>
 
 
