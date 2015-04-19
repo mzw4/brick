@@ -22,8 +22,11 @@ GOOGLE_API_KEY = 'AIzaSyAKVuw31IAwXeb5fuz4G8-Uept41q936hg'
 
 @app.route("/")
 def main():
-  get_dish_data()
   return render_template('main.html')
+
+@app.route("/review")
+def review():
+  return render_template('review.html')
 
 # dishes and corresponding restaurants
 @app.route("/ajax_get_dish_data", methods=['GET'])
@@ -299,9 +302,9 @@ def populate_mock_db():
 ###############################################################################
 ###############################     Main      ################################
 ###############################################################################
-populate_mock_db()
-submit_review()
-get_dish_data()
+# populate_mock_db()
+# submit_review()
+# get_dish_data()
 
 if __name__ == "__main__":
     app.run(port=5000)
