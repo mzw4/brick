@@ -122,22 +122,20 @@ for entry in food_responses:
 	address = location['address'][0] + ' ' + location['city'] + ', ' + location['state_code'] + ' ' + location['postal_code']
 	url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + to_url_param(address) + '&key=' + GOOGLE_API_KEY
 	response = json.loads(urllib2.urlopen(url).read())
-	print address
 	location = response['results'][0]['geometry']['location']
 	latitude = location['lat']
 	longitude = location['lng']
-	#print entry['phone'] if 'phone' in entry else ''
 
-	'''restaurants.insert(
+	restaurants.insert(
 		{
 			'_id': entry['id'],
 			'name': entry['name'],
 			'address': address,
-			'phone': entry['phone'],
+			'phone': entry['phone'] if 'phone' in entry else '',
 			'dishes': [],
 			'type': list(itertools.chain(entry['categories'])),
 			'rating': entry['rating'],
 			'lat_long': (latitude, longitude)
 		}
-	)'''
+	)
 
