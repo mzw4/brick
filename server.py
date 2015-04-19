@@ -282,7 +282,7 @@ def format_data_response(data):
 
 def format_restaurant_response(restaurant):
 	formatted_data = {}
-	for d in data:
+	for d in restaurant:
 		new_restaurant = {
 			'_id': d['id'],
 			'name': d['name'],
@@ -299,7 +299,7 @@ def format_restaurant_response(restaurant):
 
 def format_dish_response(dish):
 	formatted_data = {}
-	for d in data:
+	for d in dish:
 		new_dish = {
           '_id': d['_id'],
           'name': d['name'],
@@ -315,7 +315,7 @@ def format_dish_response(dish):
 
 def format_review_response(review):
 	formatted_data = {}
-	for d in data:
+	for d in review:
 		new_review = {
 	        '_id': d['_id'],
 	        'user_id': d['user_id'],
