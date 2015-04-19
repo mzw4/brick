@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify, request
-import pymongo
 from pymongo import MongoClient, ReturnDocument
+
+import urllib2
+import json
 
 app = Flask(__name__)
 
@@ -126,14 +128,32 @@ def submit_review():
 @app.route("/ajax_upvote_review", methods=['POST'])
 def upvote_review(review_id):
 	reviews = get_db_collection('reviews')
-	reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1}})
+	reviews.update({ '_id': review_id }, {'$inc': { 'votes': 1 }})
 	return 'success'
 
 @app.route("/ajax_downvote_review", methods=['POST'])
 def downvote_review(review_id):
 	reviews = get_db_collection('reviews')
-	reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1}})
+	reviews.update({ '_id': review_id }, {'$inc': { 'votes': -1 }})
 	return 'success'
+
+@app.route("/filter_by_distance", methods=['GET'])
+def filter_by_distance(restaurants, user_location, distance):
+	'''
+		Takes the user location by address and finds all restaurants within the distance in feet
+	'''
+	user_location = "+".join(user_location.split(' '))
+	restaurants_in_range = []
+
+	for restaurant in restaurants:
+		destination = restaurant['address']
+		url = 'https://maps.googleapis.com/maps/api/distancematrix/json?origins=' + user_location
+			+ '&destination=' + destination + '&units=imperial&key=' + GOOGLE_DISTANCE_API_KEY
+		response = urllib2.urlopen(url).read()
+		dist_in_feet = response['rows'][0]['elements'][0]['distance']['value']
+		if dist_in_feet <= distance:
+			restaurants_in_range.append(restaurant)
+	return restaurants_in_range
 
 
 ###############################################################################
