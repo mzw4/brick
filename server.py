@@ -25,9 +25,16 @@ GOOGLE_API_KEY = 'AIzaSyAKVuw31IAwXeb5fuz4G8-Uept41q936hg'
 def main():
   return render_template('main.html')
 
+<<<<<<< HEAD
+@app.route('/<path:path>')
+def static_proxy(path):
+  # send_static_file will guess the correct MIME type
+  return app.send_static_file(path)
+=======
 @app.route("/review")
 def review():
   return render_template('review.html')
+>>>>>>> a44d6cb4d9eb64ab3b7605945419aa6f4e61b200
 
 # dishes and corresponding restaurants
 @app.route("/ajax_get_dish_data", methods=['GET'])
@@ -318,4 +325,4 @@ def populate_mock_db():
 
 if __name__ == "__main__":
   app.debug = True
-  app.run(port=5000)
+  app.run(host="0.0.0.0", port=9000)
