@@ -3,7 +3,7 @@ var mainCtrl = function($scope, $rootScope, $animate, $timeout) {
 	$rootScope.$on('done-loading', function() {
 		$timeout(function() {
 			$rootScope.loading = false;
-		}, 500);
+		}, 0);
 	});
 }
 

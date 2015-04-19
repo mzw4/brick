@@ -1,3 +1,58 @@
+<div id="modal-overlay" ng-show="dish.active" ng-click="dish.active=false">
+		<div class="detail-modal" stop-event>
+			<div class="review-x" ng-click="dish.active=false">
+				x
+			</div>
+			<div class="review-image">
+				IMAGE GOES HERE
+			</div><br />
+			<div class="review-detail">
+				{{dish.restaurant_id}}
+			</div><br />
+			<div class="review-detail">
+				<i class="fa fa-star" ng-repeat="r in calcRating(dish.rating, 'full') track by $index"></i>
+				<i class="fa fa-star-half-full" style="margin-left:-5px" ng-repeat="r in calcRating(dish.rating, 'half') track by $index"></i>
+				<i class="fa fa-star-o" style="margin-left:-5px" ng-repeat="r in calcRating(dish.rating, 'empty') track by $index"></i>
+			</div><br />
+			<div class="review-detail">
+				<i class="fa fa-dollar" ng-repeat="p in calcPrice(dish.price) track by $index"></i>
+			</div>
+			<div class="review-title">
+				Reviews
+			</div><br />
+			<div class="review" ng-repeat="review in dish.reviews track by $index">
+				
+			</div>
+		</div>
+</div>
+
 <div id="search">
-	SEARCH AREA
+	<div class="query-bar">
+		Searching Dishes for:	<u>5-dish</u>
+	</div>
+	<div id="search-results">
+		<div class="flex">
+		  <div ng-repeat="result in results">
+			<div class="dish" ng-click="setDish(result)">
+				<span>
+					<div class="rating">
+						<i class="fa fa-star" ng-repeat="r in calcRating(result.rating, 'full') track by $index"></i>
+						<i class="fa fa-star-half-full" style="margin-left:-5px" ng-repeat="r in calcRating(result.rating, 'half') track by $index"></i>
+						<i class="fa fa-star-o" style="margin-left:-5px" ng-repeat="r in calcRating(result.rating, 'empty') track by $index"></i>
+					</div>
+					<div class="price">
+						<i class="fa fa-dollar" ng-repeat="p in calcPrice(result.price) track by $index"></i>
+					</div>
+					<div class="dish-name">
+						{{result.name}}
+					</div>
+					<div class="resto-name">
+						{{result.restaurant_id}}
+					</div>
+				</span>
+			</div> 
+			
+		  </div>
+		</div>
+	</div>
 </div>
