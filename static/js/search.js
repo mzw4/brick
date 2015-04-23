@@ -5,8 +5,8 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 		$scope.restaurants = data.data.restaurants;
 		$scope.reviews = data.data.reviews;
 
-		console.log($scope.results);
-		console.log($scope.photos[$scope.reviews[$scope.results[1].reviews[0]].photo].image_data);
+		console.log(data.data);
+		// console.log($scope.photos[$scope.reviews[$scope.results[1].reviews[0]].photo].image_data);
 		
 		$('#search_term').html(data.data.original_query_dish);
 		$('#search_type').html(data.data.search_type);

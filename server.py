@@ -96,12 +96,12 @@ def get_dish_data():
     photo_ids = []
     for r in reviews_list:
       photo_ids += [r['photo']]
-    print photo_ids
     photos_list = list(images.find({ '_id': { '$in': photo_ids } }))
 
-    # print dishes_list
+    print dishes_list
     # print restaurant_list
-    # print reviews_list
+    print reviews_list
+    # print photos_list
 
     # form response
     result = {
@@ -110,7 +110,6 @@ def get_dish_data():
       'reviews': format_data_response(reviews_list),
       'photos': format_data_response(photos_list)
     }
-    print photos_list
     return jsonify(result)
 
   else:
@@ -195,7 +194,7 @@ def submit_review():
       if photo:
         images = get_db_collection('images')
         image_id = images.insert({ '_id': next_id('images'), 'image_data': photo })
-        
+
       # construct review and insert it
       new_review = {
         '_id': new_review_id,
@@ -205,7 +204,7 @@ def submit_review():
         'rating': rating,
         'text': review_text,
         'date': date,
-        'photo': photo,
+        'photo': image_id,
         'votes': 0,
       }
       reviews.insert(new_review)
@@ -354,7 +353,7 @@ def populate_mock_db():
 ###############################################################################
 ###############################     Main      ################################
 ###############################################################################
-populate_mock_db()
+# populate_mock_db()
 # submit_review()
 # get_dish_data()
 # get_name_data()
