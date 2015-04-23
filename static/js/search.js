@@ -1,15 +1,15 @@
 var searchCtrl = function($scope, $rootScope, Search, $http) {
-	var result = Search.getResult().then(function(data) {
-		$scope.results = data.data.dishes;
-		$scope.photos = data.data.photos;
-		$scope.restaurants = data.data.restaurants;
-		$scope.reviews = data.data.reviews;
-
-		console.log(data.data);
+	var result = Search.makeQuery().then(function(data) {
+		$scope.dishes = data.dishes;
+		$scope.photos = data.photos;
+		$scope.restaurants = data.restaurants;
+		$scope.reviews = data.reviews;
+		$scope.query = data.query;
 		// console.log($scope.photos[$scope.reviews[$scope.results[1].reviews[0]].photo].image_data);
 		
-		$('#search_term').html(data.data.original_query_dish);
-		$('#search_type').html(data.data.search_type);
+		$('#search_term').html(data.original_query_dish);
+		$('#search_type').html(data.search_type);
+		console.log($scope);
 	})
 	$scope.dish = {
 		_id: result['_id'],
@@ -47,6 +47,4 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 	}
 }
 
-angular
-	.module('dishout')
-	.controller('searchCtrl', searchCtrl)
+app.controller('searchCtrl', searchCtrl)

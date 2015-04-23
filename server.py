@@ -37,13 +37,13 @@ def review():
 def get_dish_data():
   if request.method == 'GET':
 
-    dish = request.args.get('dish', '')
+    dish = request.args.get('dish', 'sushi')
     sort_by = request.args.get('sort_by', 'rating')
     sort_dir = request.args.get('sort_dir', 'desc')
-    location = request.args.get('location', 'new+york')
+    location = request.args.get('location', 'New+York')
     distance = request.args.get('distance', '10')
     restaurant_id = request.args.get('restaurant_id', '')
-    search_type = request.args.get('search_type', 'location')
+    search_type = request.args.get('search_type', 'dish')
   # if True:
   #   dish = '5-dish'
   #   sort_by = 'rating'  # price, distance
@@ -62,6 +62,7 @@ def get_dish_data():
     all_restaurants = restaurants.find()
     filtered_restaurants = filter_by_distance(all_restaurants, location, float(distance))
     filtered_restaurants_ids = map(lambda r: r['_id'], filtered_restaurants)
+    print 'FOUND RESTAURANTS: \n' + str(filtered_restaurants_ids)
 
     dishes_list = []
     if search_type == 'dish':
@@ -98,9 +99,9 @@ def get_dish_data():
       photo_ids += [r['photo']]
     photos_list = list(images.find({ '_id': { '$in': photo_ids } }))
 
-    print dishes_list
+    print 'FOUND DISHES: \n' + str(dishes_list)
     # print restaurant_list
-    print reviews_list
+    # print reviews_list
     # print photos_list
 
     # form response
@@ -140,7 +141,7 @@ def submit_review():
   #   photo = 'eadawd'
   #   date = 'some day'
 
-    print dish, restaurant, rating, review_text, user_id, price, tags, photo, date
+    print dish, restaurant, rating, review_text, user_id, price, tags, date
 
     # get collections
     dishes = get_db_collection('dishes')
@@ -360,4 +361,4 @@ def populate_mock_db():
 
 if __name__ == "__main__":
   app.debug = True
-  app.run(host="0.0.0.0", port=9000)
+  app.run()

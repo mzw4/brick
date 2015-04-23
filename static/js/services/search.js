@@ -1,16 +1,19 @@
-angular.module('dishout')
-    .factory('Search', function ($http) {
-        var result = {}
-        return {
-            saveResult:function (data) {
-                result = data;
-            },
-            getResult:function () {
-                var params = result['selection'] + '=' + result['params'];
-                params += '&search_type=' + result['selection'];
-                params += '&location=' + result['location'];
-
-				return $http.get('/ajax_get_dish_data?' + params);
-            }
-        };
-    });
+app.factory('Search', function ($http) {
+  var query = {}
+  return {
+    saveSearch: function (data) {
+      query = {
+          text: 'sushi',//data.text,
+          search_type: 'dish',//data.search_type,
+          location: 'New York',//data.location,
+      }
+    },
+    makeQuery:function () {
+      return $http.get('/ajax_get_dish_data', { params: query })
+          .then(function(response) {
+              response.data.query = query;
+              return response.data;
+          });
+    }
+  };
+});

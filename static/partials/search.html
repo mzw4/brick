@@ -28,26 +28,26 @@
 
 <div id="search">
 	<div class="query-bar">
-		Searching <span id="search_type">Dishes</span> for:	<u id="search_term">5-dish</u>
+		Searching <span id="search_type">Dishes</span> for:	<u>{{ query.text }}</u>
 	</div>
 	<div id="search-results">
 		<div class="flex">
-		  <div ng-repeat="result in results">
-			<div class="dish" ng-click="setDish(result)">
+		  <div ng-repeat="dish in dishes">
+			<div class="dish" ng-click="setDish(dish)">
 				<span>
 					<div class="dish-name">
-						{{result.name}}
+						{{dish.name}}
 					</div>
 					<div class="rating">
-						<i class="fa fa-star" ng-repeat="r in calcRating(result.rating, 'full') track by $index"></i>
-						<i class="fa fa-star-half-full" style="margin-left:-5px" ng-repeat="r in calcRating(result.rating, 'half') track by $index"></i>
-						<i class="fa fa-star-o" style="margin-left:-5px" ng-repeat="r in calcRating(result.rating, 'empty') track by $index"></i>
+						<i class="fa fa-star" ng-repeat="r in calcRating(dish.rating, 'full') track by $index"></i>
+						<i class="fa fa-star-half-full" style="margin-left:-5px" ng-repeat="r in calcRating(dish.rating, 'half') track by $index"></i>
+						<i class="fa fa-star-o" style="margin-left:-5px" ng-repeat="r in calcRating(dish.rating, 'empty') track by $index"></i>
 					</div>
 					<div class="price">
-						<i class="fa fa-dollar" ng-repeat="p in calcPrice(result.price) track by $index"></i>
+						<i class="fa fa-dollar" ng-repeat="p in calcPrice(dish.price) track by $index"></i>
 					</div>
 					<div class="resto-name">
-						{{result.restaurant_id}}
+						{{dish.restaurant_id}}
 					</div>
 					<img class="dish-image" ng-src="{{photos[8].image_data}}"/>
 				</span>
