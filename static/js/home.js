@@ -1,7 +1,7 @@
 var homeCtrl = function($scope, $rootScope, $animate, $timeout, Search) {
 	
-	$scope.submitSearch = function(selection, query, location) {
-		Search.saveResult({'selection': selection, 'params': query, 'location': location });
+	$scope.submitSearch = function(search_type, text, location) {
+		Search.saveSearch({'search_type': search_type, 'text': text, 'location': location });
 	}
 
 	$scope.options = {
@@ -20,6 +20,4 @@ var homeCtrl = function($scope, $rootScope, $animate, $timeout, Search) {
   $('.location-search').val('354 Clement St San Francisco, CA 94118');
 }
 
-angular
-	.module('dishout')
-	.controller('homeCtrl', homeCtrl)
+app.controller('homeCtrl', homeCtrl)

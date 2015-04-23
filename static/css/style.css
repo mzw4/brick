@@ -190,16 +190,15 @@ body {
 #home #intro {
     display: block;
     position: relative;
-    top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     -webkit-transform: translate(-50%, -50%);
-    top: 25%;
+    top: 10%;
     width: 100%;
     text-align: center
 }
 #home #intro .bold {
-    font-size: .85em
+    font-size: 2em
 }
 #home #intro .dish-search {
     margin-top: 25px;

@@ -1,4 +1,4 @@
-angular
+var app = angular
 	.module('dishout', ['ngAnimate','ngRoute'])
 	.config(function($locationProvider, $routeProvider) {
         $routeProvider

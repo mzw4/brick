@@ -11,6 +11,4 @@ var mainCtrl = function($scope, $rootScope, $animate, $timeout) {
   });
 }
 
-angular
-	.module('dishout')
-	.controller('mainCtrl', mainCtrl)
+app.controller('mainCtrl', mainCtrl)
