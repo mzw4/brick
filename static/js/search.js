@@ -39,7 +39,6 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 	$scope.setDish = function(dish) {
 		$scope.dish = dish;
 		$scope.dish.active = true;
-		$scope.dish.reviews = new Array(10);
 	}
 }
 
