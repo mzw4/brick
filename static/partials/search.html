@@ -20,8 +20,10 @@
 			<div class="review-title">
 				Reviews
 			</div><br />
-			<div class="review" ng-repeat="review in dish.reviews">
-				{{ review.text }}
+			<div class="review" ng-repeat="review in reviews">
+				<p>User: {{ review.user_id }}</p>
+				<p>Review: {{ review.text }}</p>
+				<p>Votes: {{ review.votes }}</p>
 			</div>
 		</div>
 </div>
