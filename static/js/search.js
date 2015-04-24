@@ -7,9 +7,17 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 		console.log($scope);
 		console.log("Photo url 	" + $scope.reviews[$scope.dishes[0]['popular_review_id']].photo_url);
 	})
-	$scope.dish;
-
+	$scope.dish = {
+		_id: result['_id'],
+		name: result['name'],
+		num_ratings: result['num_ratings'],
+		price: result['price'],
+		rating: result['rating'],
+		restaurant_id: result['restaurant_id'],
+		reviews: result['reviews']
+	}
 	$scope.calcRating = function(rating, type) {
+		console.log(rating);
 		if (type=='full') {
 			return new Array(Math.floor(rating));
 		}
