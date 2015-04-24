@@ -1,5 +1,5 @@
 var app = angular
-	.module('dishout', ['ngAnimate','ngRoute'])
+	.module('dishout', ['ngAnimate','ngRoute', 'customFilters'])
 	.config(function($locationProvider, $routeProvider) {
         $routeProvider
 			.when('/', {

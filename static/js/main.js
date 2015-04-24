@@ -5,10 +5,6 @@ var mainCtrl = function($scope, $rootScope, $animate, $timeout) {
 			$rootScope.loading = false;
 		}, 0);
 	});
-
-  $('#review_button').on('click', function(event) {
-    
-  });
 }
 
 app.controller('mainCtrl', mainCtrl)

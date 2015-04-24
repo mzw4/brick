@@ -17,7 +17,6 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 		reviews: result['reviews']
 	}
 	$scope.calcRating = function(rating, type) {
-		console.log(rating);
 		if (type=='full') {
 			return new Array(Math.floor(rating));
 		}

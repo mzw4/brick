@@ -34,30 +34,30 @@
 	</div>
 	<div id="search-results">
 		<div class="flex">
-		  <div ng-repeat="dish in dishes">
-			<div class="dish" ng-click="setDish(dish)">
+			<div class="dish" ng-repeat="dish in dishes" ng-click="setDish(dish)">
 				<img class="dish-image" src="static/files/images/{{reviews[dish.popular_review_id].photo_url}}"/>
 
-				<span class="info">
-					<div class="dish-name">
-						{{dish.name}}
-					</div>
-					<div class="rating">
-						<i class="fa fa-star" ng-repeat="r in calcRating(dish.rating, 'full') track by $index"></i>
-						<i class="fa fa-star-half-full" style="margin-left:-5px" ng-repeat="r in calcRating(dish.rating, 'half') track by $index"></i>
-						<i class="fa fa-star-o" style="margin-left:-5px" ng-repeat="r in calcRating(dish.rating, 'empty') track by $index"></i>
-					</div>
-					<div class="num_reviews">{{ dish.reviews.length }}</div>
-					<div class="price">
-						<i class="fa fa-dollar" ng-repeat="p in calcPrice(dish.price) track by $index"></i>
-					</div>
-					<div class="resto-name">
-						{{restaurants[dish.restaurant_id].name}}
+				<span class="info" hoverslide>
+					<div class="wrapper">
+						<div class="dish-name">
+							{{dish.name | capitalize }}
+						</div>
+						<div class="resto-name">
+							{{restaurants[dish.restaurant_id].name }}
+						</div>
+						<div class="rating">
+							<i class="fa fa-star" ng-repeat="r in calcRating(dish.rating, 'full') track by $index"></i>
+							<i class="fa fa-star-half-full" style="margin-left:-5px" ng-repeat="r in calcRating(dish.rating, 'half') track by $index"></i>
+							<i class="fa fa-star-o" style="margin-left:-5px" ng-repeat="r in calcRating(dish.rating, 'empty') track by $index"></i>
+							<span class="num_reviews">({{ dish.reviews.length }})</span>
+						</div>
+						<div class="price">
+							<i class="fa fa-dollar" ng-repeat="p in calcPrice(dish.price) track by $index"></i>
+						</div>
 					</div>
 				</span>
 			</div> 
 			
-		  </div>
 		</div>
 	</div>
 </div>

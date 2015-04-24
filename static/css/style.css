@@ -169,7 +169,7 @@ body {
     -moz-flex-wrap: wrap;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    justify-content: center
+    justify-content: center;
 }
 .main {
     margin-top: 10vh;
@@ -234,7 +234,8 @@ body {
 }
 #search {
     width: 100%;
-    height: 100%
+    height: 100%;
+    background-color: #E6E6E6;
 }
 #search .query-bar {
     display: block;
@@ -257,80 +258,102 @@ body {
 #search #search-results .dish {
     transition: .5s ease all;
     -webkit-transition: .5s ease all;
-    text-align: center;
+    /*text-align: center;*/
     height: 250px;
     width: 250;
-    margin: 0 15px;
+    margin: 0 10px 20px 10px;
     border-bottom: 1px solid grey;
+    position: relative;
     cursor: pointer;
-    position: relative;
 }
-#search #search-results .dish:hover {
+#search #search-results .dish .info {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    /*background-color: rgba(255, 255, 255, .55);*/
     color: white;
-    background-color: #E6E6E6;
-    transition: .5s ease all;
-    -webkit-transition: .5s ease all
-}
-#search #search-results .dish span {
-    width: 100%;
-    height: 50%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    background-color: rgba(255, 255, 255, .75);
-    color: grey;
-    font-size: 2vh
-}
-/*#search #search-results .dish span .info {
-    background-color: rgba(255, 255, 255, .75);
-    color: grey;
-    font-size: 2vh
-    width: 100%;
-    height: 3vh;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}*/
+    font-size: 2vh;
+    /*color: #4C4C4C;*/
+    color: white;
+    opacity: 1;
 
-#search #search-results .dish span .dish-name {
-    /*height: 2vh;*/
-    position: relative;
-    /*left: 50%;*/
-/*    transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%)*/
+    background-color: rgba(0, 0, 0, .55);
+
+    /* HOVER OFF */
+    -webkit-transition: all 300ms ease;
+    -moz-transition: all 300ms ease;
+    -o-transition: all 300ms ease;
+    -ms-transition: all 300ms ease;
+    transition: all 300ms ease;
+}
+#search #search-results .dish .info:hover {
+    background-color: rgba(0, 0, 0, 0);
+}
+#search #search-results .dish .info .wrapper {
+  position: absolute;
+  width: auto;
+  top: 50%;
+  width: 100%;
+  padding: 15px;
+
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+
+  -webkit-transition: all 300ms ease;
+  -moz-transition: all 300ms ease;
+  -o-transition: all 300ms ease;
+  -ms-transition: all 300ms ease;
+  transition: all 300ms ease;
+}
+#search #search-results .dish .info .wrapper.small_info{
+  top: 0;
+  padding: 5px 15px;
+  transform: none;
+  -webkit-transform: none;
+  background-color: rgba(0, 0, 0, .55);
+}
+#search #search-results .dish .info .dish-name {
+  font-size: 150%;
+  width: 100%;
 }
 #search #search-results .dish .resto-name {
-/*    width: 100%;
-    height: 3vh;
-    position: absolute;
-    bottom: 0;
-    left: 0;*/
-/*    background-color: rgba(255, 255, 255, .75);
-    color: grey;
-    font-size: 2vh*/
+  font-size: 120%;
+  font-weight: bold;
 }
-#search #search-results .dish span .rating {
-/*    text-align: center;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 3vh;
-    font-size: 2vh*/
+#search #search-results .dish .info .rating {
+  padding: 5px 0;
+  height: 2em;
+  -webkit-transition: all 300ms ease .1s;
+  -moz-transition: all 300ms ease .1s;
+  -o-transition: all 300ms ease .1s;
+  -ms-transition: all 300ms ease .1s;
+  transition: all 300ms ease .1s;
 }
-#search #search-results .dish span .price {
-/*    width: 100%;
-    text-align: center;
-    position: absolute;
-    top: 1.75em;
-    height: 3vh;
-    font-size: 2vh*/
+#search #search-results .dish .info .wrapper.small_info .rating {
+  padding: 0;
+  height: 0;
+  opacity: 0;
+}
+#search #search-results .dish .info .price {
+  padding-top: 5px;
+  height: 1em;
+  -webkit-transition: all 300ms ease .1s;
+  -moz-transition: all 300ms ease .1s;
+  -o-transition: all 300ms ease .1s;
+  -ms-transition: all 300ms ease .1s;
+  transition: all 300ms ease .1s;
+}
+#search #search-results .dish .info .wrapper.small_info .price {
+  padding: 0;
+  height: 0;
+  opacity: 0;
 }
 #search #search-results .dish .dish-image {
   position: absolute;
   left: 0;
   top: 0;
-  height: 250px;
   width: 100%;
   height: 100%;
 }
@@ -376,12 +399,22 @@ body {
     width: 7%
 }
 #modal-overlay.ng-hide-add.ng-hide-add-active {
-    -webkit-animation: fadeOut .5s;
-    -moz-animation: fadeOut .5s;
-    animation: fadeOut .5s
+    -webkit-animation: fadeOut .3s;
+    -moz-animation: fadeOut .3s;
+    animation: fadeOut .3s
 }
 #modal-overlay.ng-hide-remove.ng-hide-remove-active {
-    -webkit-animation: fadeIn 1s;
-    -moz-animation: fadeIn 1s;
-    animation: fadeIn 1s
+    -webkit-animation: fadeIn 0.3s;
+    -moz-animation: fadeIn 0.3s;
+    animation: fadeIn 0.3s
+}
+
+/* ---------- Properties ---------- */
+
+.break-word {
+  word-wrap: break-word;
+}
+
+.animate-all-fast {
+
 }
