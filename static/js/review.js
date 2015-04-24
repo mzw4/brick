@@ -2,7 +2,7 @@
 var dishes = [];
 var restaurants = [];
 
-var uploaded_photo = null;
+var uploaded_file = null;
 
 Dropzone.autoDiscover = false;
 
@@ -42,7 +42,7 @@ $(function () {
     var reader = new FileReader();
     reader.onload = function(e) {
       var binary = e.target.result;
-      uploaded_photo = binary;
+      uploaded_file = file;
       $img_display.attr('src', binary).hide().fadeIn();
       $upload_help_text.fadeOut();
     }
@@ -101,14 +101,27 @@ function ajax_submit_review() {
     review_text: $description_field.val(),
     user_id: 'testuser',
     price: 999,
-    photo: uploaded_photo,
+    photo: uploaded_file,
     date: (new Date()).toLocaleString(),
     tags: JSON.stringify(['ta', 'da']),
   };
+  
+  formData = new FormData();
+  for (key in payload) {
+    formData.append(key, payload[key]);
+  }
 
-  return $.post('/ajax_submit_review', payload, function(data) {
-    if(data) {
-      console.log(data);
+  return $.ajax({
+    url: '/ajax_submit_review',
+    type: 'POST',
+    data: formData,
+    dataType: 'json',
+    processData: false,
+    contentType: false,
+    success: function(data) {
+      if(data) {
+        console.log(data);
+      }
     }
   });
 }

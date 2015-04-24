@@ -3,7 +3,7 @@
 }
 
 #home {
-  background-image: url('../img/pork.jpg');
+  background-image: url('../assets/pork.jpg');
   background-size: cover;
   position: relative;
 }

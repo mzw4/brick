@@ -1,15 +1,14 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from pymongo import MongoClient, ReturnDocument
 from bson.binary import Binary
 from datetime import datetime
+from werkzeug import secure_filename
 
 from utils import get_db_connection, get_db_collection, to_url_param, get_distance
 
 import pymongo
 import urllib2
-import json
-import math
-import ast
+import sys, os, json, math, ast
 
 app = Flask(__name__)
 
@@ -19,6 +18,19 @@ app = Flask(__name__)
 
 MAX_QUERY_LENGTH = 100
 GOOGLE_API_KEY = 'AIzaSyAKVuw31IAwXeb5fuz4G8-Uept41q936hg'
+
+UPLOAD_FOLDER = 'files/images/'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+###############################################################################
+###############################    Config      ################################
+###############################################################################
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 ###############################################################################
 ################################     URLS      ################################
@@ -89,15 +101,19 @@ def get_dish_data():
     restaurant_list = filter(lambda r: r if r['_id'] in restaurant_ids else None, filtered_restaurants)
 
     # get associated review data
-    review_ids = []
+    reviews_list = []
     for dish in dishes_list:
-      review_ids += dish['reviews']
-    reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
+      review_ids = dish['reviews']
+      dish_reviews = list(reviews.find({ '_id': { '$in': review_ids } }))
+      if dish_reviews:
+        dish['popular_review_id'] = max(dish_reviews, key=lambda r: r['votes'])['_id']
+        reviews_list += dish_reviews
+    # reviews_list = list(reviews.find({ '_id': { '$in': review_ids } }))
 
-    photo_ids = []
-    for r in reviews_list:
-      photo_ids += [r['photo']]
-    photos_list = list(images.find({ '_id': { '$in': photo_ids } }))
+    # photo_ids = []
+    # for r in reviews_list:
+    #   photo_ids += [r['photo']]
+    # photos_list = list(images.find({ '_id': { '$in': photo_ids } }))
 
     print 'FOUND DISHES: \n' + str(dishes_list)
     # print restaurant_list
@@ -109,7 +125,7 @@ def get_dish_data():
       'dishes': format_data_response(dishes_list),
       'restaurants': format_data_response(restaurant_list),
       'reviews': format_data_response(reviews_list),
-      'photos': format_data_response(photos_list)
+      # 'photos': format_data_response(photos_list)
     }
     return jsonify(result)
 
@@ -120,28 +136,24 @@ def get_dish_data():
 @app.route("/ajax_submit_review", methods=['POST'])
 def submit_review():
   if request.method == 'POST':
-    dish = request.form.get('dish', '')
-    restaurant = request.form.get('restaurant', '')
-    rating = int(request.form.get('rating', ''))
+    dish = request.form.get('dish', None)
+    restaurant = request.form.get('restaurant', None)
+    rating = int(request.form.get('rating', -1))
     review_text = request.form.get('review_text', '')
-    user_id = request.form.get('user_id', '')
-    price = request.form.get('price', '')
-    tags = ast.literal_eval(request.form.get('tags', ''))
-    photo = request.form.get('photo', '')
+    user_id = request.form.get('user_id', None)
+    price = request.form.get('price', -1)
+    tags = ast.literal_eval(request.form.get('tags', '[]'))
     date = datetime.now()
+    photo = request.files.get('photo', None)
 
-  # if True:
-  #   dish = '5-disddh'
-  #   restaurant = 'The Cobra Club'
-  #   review_text = 'omgomgomg'
-  #   rating = 5.0
-  #   user_id = '9000'
-  #   price = '9999'
-  #   tags = ['tasty', 'flaming hot']
-  #   photo = 'eadawd'
-  #   date = 'some day'
-
+    # validate input
     print dish, restaurant, rating, review_text, user_id, price, tags, date
+
+    # if there is a valid photo, save it to the filesystem
+    photo_url = None
+    if photo and allowed_file(photo.filename):
+        photo_url = secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], photo_url))
 
     # get collections
     dishes = get_db_collection('dishes')
@@ -150,7 +162,6 @@ def submit_review():
 
     reviewed_restaurant = restaurants.find_one({ 'name': restaurant })
     if reviewed_restaurant:
-
       reviewed_restaurant_id = reviewed_restaurant['_id']
       reviewed_dish_id = None
       new_review_id = next_id('reviews')
@@ -190,12 +201,6 @@ def submit_review():
         reviewed_dish_id = dishes.insert(new_dish)
         print 'added new dish ' + str(reviewed_dish_id)
 
-      # if there is a photo, upload it to the photo collection
-      image_id = None
-      if photo:
-        images = get_db_collection('images')
-        image_id = images.insert({ '_id': next_id('images'), 'image_data': photo })
-
       # construct review and insert it
       new_review = {
         '_id': new_review_id,
@@ -205,7 +210,7 @@ def submit_review():
         'rating': rating,
         'text': review_text,
         'date': date,
-        'photo': image_id,
+        'photo_url': photo_url,
         'votes': 0,
       }
       reviews.insert(new_review)

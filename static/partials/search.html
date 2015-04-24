@@ -47,9 +47,9 @@
 						<i class="fa fa-dollar" ng-repeat="p in calcPrice(dish.price) track by $index"></i>
 					</div>
 					<div class="resto-name">
-						{{dish.restaurant_id}}
+						{{restaurants[dish.restaurant_id].name}}
 					</div>
-					<img class="dish-image" ng-src="{{photos[8].image_data}}"/>
+					<img class="dish-image" src="static/files/images/{{reviews[dish.popular_review_id].photo_url}}"/>
 				</span>
 			</div> 
 			
