@@ -49,7 +49,7 @@ def review():
 def get_dish_data():
   if request.method == 'GET':
 
-    dish = request.args.get('dish', 'sushi')
+    dish = request.args.get('text', 'sushi')
     sort_by = request.args.get('sort_by', 'rating')
     sort_dir = request.args.get('sort_dir', 'desc')
     location = request.args.get('location', 'New+York')
@@ -125,6 +125,8 @@ def get_dish_data():
       'dishes': format_data_response(dishes_list),
       'restaurants': format_data_response(restaurant_list),
       'reviews': format_data_response(reviews_list),
+      'num_results': len(dishes_list),
+      'query': request.args,
       # 'photos': format_data_response(photos_list)
     }
     return jsonify(result)

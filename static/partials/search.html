@@ -30,7 +30,7 @@
 
 <div id="search">
 	<div class="query-bar">
-		Searching <span id="search_type">Dishes</span> for:	<u>{{ query.text }}</u>
+		{{ num_results }} results for "<b>{{ query.text }}</b>" near <b>{{ query.location }}</b>
 	</div>
 	<div id="search-results">
 		<div class="flex">

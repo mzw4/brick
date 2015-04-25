@@ -4,6 +4,7 @@ var searchCtrl = function($scope, $rootScope, Search, $http) {
 		$scope.restaurants = data.restaurants;
 		$scope.reviews = data.reviews;
 		$scope.query = data.query;
+		$scope.num_results = data.num_results;
 		console.log($scope);
 		console.log("Photo url 	" + $scope.reviews[$scope.dishes[0]['popular_review_id']].photo_url);
 	})

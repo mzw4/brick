@@ -114,29 +114,26 @@ body {
     z-index: 9998;
     font-family: hankenbook!important
 }
-.navbar .item {
+.navbar a {
     height: 100%;
-    transition: .5s ease all;
-    -webkit-transition: .5s ease all
-}
-.navbar .item:hover {
-    background-color: #fff;
-    transition: .5s ease all;
-    -webkit-transition: .5s ease all
-}
-.navbar .item a {
     display: block;
     position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
     text-align: center;
     color: #fff;
-    text-decoration: none
+    transition: .3s ease all;
+    -webkit-transition: .3s ease all;
+    text-decoration: none;
+    margin: 0 -15px;
 }
-.navbar .item:hover a {
-    color: #885388
+.navbar a:hover {
+    color: #885388;
+    background-color: white;
+}
+.navbar a p {
+  top: 50%;
+  position: relative;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
 }
 .title {
     display: block;
@@ -247,7 +244,8 @@ body {
     top: 15px;
     border-bottom: 1px solid grey;
     text-align: center;
-    color: grey
+    color: #1f1f1f;
+    font-size: 120%;
 }
 #search #search-results {
     max-width: calc(4 * 280px);
@@ -362,9 +360,9 @@ body {
 }
 .ng-leave,
 .ng-leave-active {
-    -webkit-animation: fadeOut .5s;
-    -moz-animation: fadeOut .5s;
-    animation: fadeOut .5s;
+    -webkit-animation: fadeOut .3s;
+    -moz-animation: fadeOut .3s;
+    animation: fadeOut .3s;
     z-index: 9999
 }
 .ng-enter,
@@ -379,8 +377,8 @@ body {
 }
 #load.ng-hide-add.ng-hide-add-active,
 #load.ng-hide-remove.ng-hide-remove-active {
-    -webkit-transition: all linear .5s;
-    transition: all linear .5s
+    -webkit-transition: all linear .3s;
+    transition: all linear .3s
 }
 #load.ng-hide {
     opacity: 0
